@@ -4,6 +4,7 @@
 1 => int g_print_osc_debug;
 8010 => int player1_inport;              // port for receiving osc from player 1
 8012 => int proc_outport;                // port for sending osc messages to Processing
+//"10.32.142.48" => string proc_client;       // IP address for Processing
 "localhost" => string proc_client;       // IP address for Processing
 
 // setup OSC input from iphones
@@ -37,25 +38,20 @@ fun int calcNote(float x)
 
 <<<"test", calcNote(0.9) >>>;
 
-// a synth
-public class impSynth
-{
-    // audio processing chain
-    //SqrOsc osc1 => LPF flt => ADSR env => Pan2 panr;
-    SqrOsc osc1 => ADSR env => Pan2 panr;
-    panr.left => Gain dryLvlL;    
-    panr.right => Gain dryLvlR; 
+// stuff for synthesizing sound
+SawOsc osc1 => LPF flt1 => ADSR env1 => Pan2 panr1 => dac;
+env1.keyOff();
+env1.set(10::ms, 80::ms, 0.5, 300::ms);
+2.0 => flt1.Q;
     
-    env.set(10::ms, 50::ms, 0.2, 200::ms);
     
-    // methods
-    public void play(int note, float parm1)
-    {
-        Std.mtof(note) => osc1.freq;
-        env.keyOn();
-        10::ms => now;
-        env.keyOff();
-    }   
+fun void playsynth1(int note, float parm1)    
+{    
+    Std.mtof(note) => osc1.freq;
+    200.0 + 15000.0*parm1 => flt1.freq;
+    env1.keyOn();
+    50::ms => now;
+    env1.keyOff();
 }
 
 
@@ -79,17 +75,20 @@ fun void event1Listener()
         while( osc_in_event_1.nextMsg() )
         {
             osc_in_event_1.getFloat() => float x_in;
-            g_vert_max - osc_in_event_1.getFloat() => float y_in;
+            osc_in_event_1.getFloat() => float y_procc_in;
+            g_vert_max - y_procc_in => float y_synth_in;
             
-            calcNote(y_in) => int note;
+            calcNote(y_synth_in) => int note;
             
             if( g_print_osc_debug )
             {
-                <<< " in event 1: ", x_in, y_in, note >>>;
+                <<< " in event 1: ", x_in, y_synth_in, note >>>;
             }
+            // play note
+            spork ~playsynth1(note, x_in);
             
             // send message to processing
-            sendEventToProcc(1, x_in, y_in);
+            sendEventToProcc(1, x_in, y_procc_in);
         }
     }
 }
