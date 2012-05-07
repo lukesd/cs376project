@@ -3,6 +3,7 @@
 import oscP5.*;
 import netP5.*;
 
+int[] coor = new int[3];
 
 OscP5 oscP5;
 
@@ -10,13 +11,13 @@ OscP5 oscP5;
 NetAddress myBroadcastLocation; 
 
 void setup() {
-  size(640, 960);
+  size(600, 600);
   frameRate(25);
   
   /* create a new instance of oscP5. 
    * 8000 is the port number you are listening for incoming osc messages.
    */
-  oscP5 = new OscP5(this, 8000);
+  oscP5 = new OscP5(this, 8012);
   
   /* create a new NetAddress. a NetAddress is used when sending osc messages
    * with the oscP5.send method.
@@ -29,7 +30,8 @@ void setup() {
 
 void draw() {
   background(0);
-  ellipse(mouseX, mouseY, 80, 80);
+  
+  ellipse(coor[1], coor[2], 80, 80);
 }
 
 
@@ -66,7 +68,22 @@ void keyPressed() {
 
 /* incoming osc message are forwarded to the oscEvent method. */
 void oscEvent(OscMessage theOscMessage) {
-  /* get and print the address pattern and the typetag of the received OscMessage */
-  println("### received an osc message with addrpattern "+theOscMessage.addrPattern()+" and typetag "+theOscMessage.typetag());
-  theOscMessage.print();
+  /* check if theOscMessage has the address pattern we are looking for. */  
+  if(theOscMessage.checkAddrPattern("/new_note") == true) {
+    /* check if the typetag is the right one. */
+    if(theOscMessage.checkTypetag("iff")) {
+      /* parse theOscMessage and extract the values from the osc message arguments. */
+      int player = theOscMessage.get(0).intValue();  // get the first osc argument
+      float x = theOscMessage.get(1).floatValue(); // get the second osc argument
+      float y = theOscMessage.get(2).floatValue(); // get the third osc argument
+      print("### received an osc message /test with typetag iff.");
+      println(" values: " + player + ", " + x + ", " + y);
+      coor[0] = player;
+      coor[1] = int(x * 600);
+      coor[2] = int(y * 600);
+      return;
+    }
+  }
+  println("### received an osc message. with address pattern "+
+          theOscMessage.addrPattern()+" typetag "+ theOscMessage.typetag());
 }
