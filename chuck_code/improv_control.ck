@@ -2,16 +2,22 @@
 
 // global vars
 1 => int g_print_osc_debug;
-8010 => int player1_inport;              // port for receiving osc from player 1
-8012 => int proc_outport;                // port for sending osc messages to Processing
+2 => int g_num_players;
+int player_inport[g_num_players];
+8010 => player_inport[0];                // port for receiving osc from player 1
+8011 => player_inport[1];                // port for receiving osc from player 2
+8012 => int proc_outport;                  // port for sending osc messages to Processing
 //"10.32.142.48" => string proc_client;       // IP address for Processing
 "localhost" => string proc_client;       // IP address for Processing
 
 // setup OSC input from iphones
-OscRecv osc_in_1;
-player1_inport => osc_in_1.port;                   // port for receiving osc from player 1
-osc_in_1.listen();
-osc_in_1.event("/3/xy", "f f") @=> OscEvent osc_in_event_1;
+OscRecv osc_in[g_num_players];
+OscEvent osc_in_event[g_num_players];
+for (0 => int i; i < g_num_players; i++) {
+    player_inport[i] => osc_in[i].port;                   // port for receiving osc from player
+    osc_in[i].listen();
+    osc_in[i].event("/3/xy", "f f") @=> osc_in_event[i];
+}
 
 // setup OSC out to processing
 OscSend osc_proc_out;
@@ -36,28 +42,39 @@ fun int calcNote(float x)
     return note;
 }
 
-<<<"test", calcNote(0.9) >>>;
-
 // stuff for synthesizing sound
-SawOsc osc1 => LPF flt1 => ADSR env1 => Pan2 panr1 => dac;
-env1.keyOff();
-env1.set(10::ms, 80::ms, 0.5, 300::ms);
-2.0 => flt1.Q;
+LPF flt[g_num_players];
+ADSR env[g_num_players];
+Pan2 panr[g_num_players];
+-0.8 => panr[0].pan;
+0.8 => panr[1].pan;
+
+SawOsc osc1 => flt[0] => env[0] => panr[0] => dac;
+PulseOsc osc2 => flt[1] => env[1] => panr[1] => dac;
+
+for (0 => int i; i < g_num_players; i++) {
+    env[i].keyOff();
+    env[i].set(10::ms, 80::ms, 0.5, 300::ms);
+    2.0 => flt[i].Q;
+}
     
+// function for playing notes   
+fun void playsynth(int player, int note, float parm1)    
+{   
+    if (player == 1) 
+        Std.mtof(note) => osc1.freq;
+    else
+        Std.mtof(note) => osc2.freq;
     
-fun void playsynth1(int note, float parm1)    
-{    
-    Std.mtof(note) => osc1.freq;
-    200.0 + 15000.0*parm1 => flt1.freq;
-    env1.keyOn();
+    200.0 + 15000.0*parm1 => flt[player].freq;
+    env[player].keyOn();
     50::ms => now;
-    env1.keyOff();
+    env[player].keyOff();
 }
 
-
-
 // spork listeners --------------------------------------------
-spork ~ event1Listener();
+spork ~ eventListener(0);
+spork ~ eventListener(1);
 
 // make time --------------------------------------------------
 while( 1 )
@@ -67,28 +84,28 @@ while( 1 )
 
 
 // processes for listening for osc events ---------------------
-fun void event1Listener()
+fun void eventListener(int player)
 {
     while( 1 )
     {
-        osc_in_event_1 => now;
-        while( osc_in_event_1.nextMsg() )
+        osc_in_event[player] => now;
+        while( osc_in_event[player].nextMsg() )
         {
-            osc_in_event_1.getFloat() => float x_in;
-            osc_in_event_1.getFloat() => float y_procc_in;
+            osc_in_event[player].getFloat() => float x_in;
+            osc_in_event[player].getFloat() => float y_procc_in;
             g_vert_max - y_procc_in => float y_synth_in;
             
             calcNote(y_synth_in) => int note;
             
             if( g_print_osc_debug )
             {
-                <<< " in event 1: ", x_in, y_synth_in, note >>>;
+                <<< " in event from player: ", player, x_in, y_synth_in, note >>>;
             }
             // play note
-            spork ~playsynth1(note, x_in);
+            spork ~playsynth(player, note, x_in);
             
             // send message to processing
-            sendEventToProcc(1, x_in, y_procc_in);
+            sendEventToProcc(player, x_in, y_procc_in);
         }
     }
 }
