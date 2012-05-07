@@ -3,7 +3,8 @@
 import oscP5.*;
 import netP5.*;
 
-int[] coor = new int[3];
+int[] coor1 = new int[2];
+int[] coor2 = new int[2];
 
 OscP5 oscP5;
 
@@ -30,8 +31,8 @@ void setup() {
 
 void draw() {
   background(0);
-  
-  ellipse(coor[1], coor[2], 80, 80);
+  ellipse(coor1[0], coor1[1], 80, 80);
+  ellipse(coor2[0], coor2[1], 40, 40);
 }
 
 
@@ -78,9 +79,14 @@ void oscEvent(OscMessage theOscMessage) {
       float y = theOscMessage.get(2).floatValue(); // get the third osc argument
       print("### received an osc message /test with typetag iff.");
       println(" values: " + player + ", " + x + ", " + y);
-      coor[0] = player;
-      coor[1] = int(x * 600);
-      coor[2] = int(y * 600);
+      if (player == 1) {
+        coor1[0] = int(x * 600);
+        coor1[1] = int(y * 600);
+      }
+      else if (player == 2) {
+        coor2[0] = int(x * 600);
+        coor2[1] = int(y * 600);
+      }
       return;
     }
   }
