@@ -87,26 +87,27 @@ while( 1 )
 // processes for listening for osc events ---------------------
 fun void eventListener(int player)
 {
+    static pl = player;
     while( 1 )
     {
-        osc_in_event[player] => now;
-        while( osc_in_event[player].nextMsg() )
+        osc_in_event[pl] => now;
+        while( osc_in_event[pl].nextMsg() )
         {
-            osc_in_event[player].getFloat() => float x_in;
-            osc_in_event[player].getFloat() => float y_procc_in;
+            osc_in_event[pl].getFloat() => float x_in;
+            osc_in_event[pl].getFloat() => float y_procc_in;
             g_vert_max - y_procc_in => float y_synth_in;
             
             calcNote(y_synth_in) => int note;
             
             if( g_print_osc_debug )
             {
-                <<< " in event from player: ", player, x_in, y_synth_in, note >>>;
+                <<< " in event from player: ", pl, x_in, y_synth_in, note >>>;
             }
             // play note
-            spork ~playsynth(player, note, x_in);
+            spork ~playsynth(pl, note, x_in);
             
             // send message to processing
-            sendEventToProcc(player, x_in, y_procc_in);
+            sendEventToProcc(pl, x_in, y_procc_in);
         }
     }
 }
