@@ -79,11 +79,11 @@ void oscEvent(OscMessage theOscMessage) {
       float y = theOscMessage.get(2).floatValue(); // get the third osc argument
       print("### received an osc message /test with typetag iff.");
       println(" values: " + player + ", " + x + ", " + y);
-      if (player == 1) {
+      if (player == 0) {
         coor1[0] = int(x * 600);
         coor1[1] = int(y * 600);
       }
-      else if (player == 2) {
+      else if (player == 1) {
         coor2[0] = int(x * 600);
         coor2[1] = int(y * 600);
       }
@@ -91,5 +91,5 @@ void oscEvent(OscMessage theOscMessage) {
     }
   }
   println("### received an osc message. with address pattern "+
-          theOscMessage.addrPattern()+" typetag "+ theOscMessage.typetag());
+    theOscMessage.addrPattern()+" typetag "+ theOscMessage.typetag());
 }
