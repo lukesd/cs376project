@@ -24,8 +24,7 @@ OscSend osc_proc_out;
 osc_proc_out.setHost(proc_client, proc_outport);
 
 // global variables for game and music calculation
-// [60,62,63,65,67,69,70] @=> int g_scale[];    // the scale that notes are played on
-[48, 50, 53, 55, 57, 60, 62, 65, 67, 69] @=> int g_scale[];    // 2 8ve of penta-tonic the scale that notes are played on
+[48, 50, 53, 55, 57, 60, 62, 65, 67, 69] @=> int g_scale[];    // 2 8ve of pentatonic the scale that notes are played on
 g_scale.cap() => int g_num_notes;
 0.0 => float g_vert_min;                   // minimum vertical input value from iphone
 1.0 => float g_vert_max;                   // maximum vertical input value from iphone
@@ -47,15 +46,20 @@ fun int calcNote(float x)
 LPF flt[g_num_players];
 ADSR env[g_num_players];
 Pan2 panr[g_num_players];
--0.8 => panr[0].pan;
-0.8 => panr[1].pan;
+0.8 => panr[0].pan;
+-0.8 => panr[1].pan;
 
 SawOsc osc1 => flt[0] => env[0] => panr[0] => dac;
 PulseOsc osc2 => flt[1] => env[1] => panr[1] => dac;
+JCRev rvrb;
+env[0] => Gain wet_gain;
+env[1] => wet_gain;
+wet_gain => rvrb => dac;
+0.15 => wet_gain.gain;
 
 for (0 => int i; i < g_num_players; i++) {
     env[i].keyOff();
-    env[i].set(10::ms, 80::ms, 0.5, 300::ms);
+    env[i].set(10::ms, 30::ms, 0.3, 200::ms);
     2.0 => flt[i].Q;
 }
     
@@ -67,7 +71,7 @@ fun void playsynth(int player, int note, float parm1)
     else
         Std.mtof(note) => osc2.freq;
     
-    200.0 + 15000.0*parm1 => flt[player].freq;
+    150.0 + 10000.0*parm1 => flt[player].freq;
     env[player].keyOn();
     50::ms => now;
     env[player].keyOff();
@@ -87,7 +91,7 @@ while( 1 )
 // processes for listening for osc events ---------------------
 fun void eventListener(int player)
 {
-    static pl = player;
+    player => int pl;
     while( 1 )
     {
         osc_in_event[pl] => now;
