@@ -24,7 +24,8 @@ OscSend osc_proc_out;
 osc_proc_out.setHost(proc_client, proc_outport);
 
 // global variables for game and music calculation
-[60,62,63,65,67,69,70] @=> int g_scale[];    // the scale that notes are played on
+// [60,62,63,65,67,69,70] @=> int g_scale[];    // the scale that notes are played on
+[48, 50, 53, 55, 57, 60, 62, 65, 67, 69] @=> int g_scale[];    // 2 8ve of penta-tonic the scale that notes are played on
 g_scale.cap() => int g_num_notes;
 0.0 => float g_vert_min;                   // minimum vertical input value from iphone
 1.0 => float g_vert_max;                   // maximum vertical input value from iphone
@@ -42,7 +43,7 @@ fun int calcNote(float x)
     return note;
 }
 
-// stuff for synthesizing sound
+// stuff for synthesizing sound ---------------------------------
 LPF flt[g_num_players];
 ADSR env[g_num_players];
 Pan2 panr[g_num_players];
@@ -61,7 +62,7 @@ for (0 => int i; i < g_num_players; i++) {
 // function for playing notes   
 fun void playsynth(int player, int note, float parm1)    
 {   
-    if (player == 1) 
+    if (player == 0) 
         Std.mtof(note) => osc1.freq;
     else
         Std.mtof(note) => osc2.freq;
