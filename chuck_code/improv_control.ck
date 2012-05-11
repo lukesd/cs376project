@@ -154,11 +154,11 @@ fun void midiCtl()
         // get the message(s)
         while( midiIn.recv(midi_msg) )
         {
-            if (msg.data1 == 176 && msg.data2 == 13) {
+            if (midi_msg.data1 == 176 && midi_msg.data2 == 13) {
                 midi_msg.data3 / 127.0 => g_midi_in_x;
                 calcNote(midi_msg.data3 / 127.0) => int note;
             }
-            else if (msg.data1 == 176 && msg.data2 == 14) {
+            else if (midi_msg.data1 == 176 && midi_msg.data2 == 14) {
                 midi_msg.data3 / 127.0 => float midi_in_y;
                 calcNote(midi_in_y) => int note;
                 spork ~playsynth(0, note, g_midi_in_x);
