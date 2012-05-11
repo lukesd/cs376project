@@ -20,7 +20,8 @@ for (0 => int i; i < g_num_players; i++) {
 //    osc_in[i].event("/3/xy", "f f") @=> osc_in_event[i];
 //    osc_in[i].event("/1/multixy3/1", "f f") @=> osc_in_event[i];
 //    osc_in[i].event("/1/multixy3/1", "f f") @=> osc_in_event[i];
-    osc_in[i].event("/xy1/xy1", "f f") @=> osc_in_event[i];
+//    osc_in[i].event("/xy1/xy1", "f f") @=> osc_in_event[i];
+    osc_in[i].event("/touch", "f f") @=> osc_in_event[i];
 
 }
 
@@ -39,7 +40,7 @@ else
     <<< "MIDI device:", midiIn.num(), " -> ", midiIn.name() >>>;
 
 // global variables for game and music calculation
-[48, 50, 53, 55, 57, 60, 62, 65, 67, 69] @=> int g_scale[];    // 2 8ve of pentatonic the scale that notes are played on
+[36, 38, 41, 43, 45, 48, 50, 53, 55, 57, 60, 62, 65, 67, 69, 72, 74, 77, 79, 81] @=> int g_scale[];    // 2 8ve of pentatonic the scale that notes are played on
 g_scale.cap() => int g_num_notes;
 0.0 => float g_vert_min;                   // minimum vertical input value from iphone
 1.0 => float g_vert_max;                   // maximum vertical input value from iphone
@@ -58,14 +59,15 @@ fun int calcNote(float x)
 }
 
 // stuff for synthesizing sound ---------------------------------
-LPF flt[g_num_players];
+LPF lp_flt[g_num_players];
+HPF hp_flt[g_num_players];
 ADSR env[g_num_players];
 Pan2 panr[g_num_players];
 0.8 => panr[0].pan;
 -0.8 => panr[1].pan;
 
-SawOsc osc1 => flt[0] => env[0] => panr[0] => dac;
-PulseOsc osc2 => flt[1] => env[1] => panr[1] => dac;
+SawOsc osc1 => lp_flt[0] => hp_flt[0] => env[0] => panr[0] => dac;
+PulseOsc osc2 => lp_flt[1] => hp_flt[1] => env[1] => panr[1] => dac;
 JCRev rvrb;
 env[0] => Gain wet_gain;
 env[1] => wet_gain;
@@ -74,8 +76,9 @@ wet_gain => rvrb => dac;
 
 for (0 => int i; i < g_num_players; i++) {
     env[i].keyOff();
-    env[i].set(10::ms, 30::ms, 0.3, 200::ms);
-    2.0 => flt[i].Q;
+    env[i].set(5::ms, 30::ms, 0.3, 300::ms);
+    2.0 => lp_flt[i].Q;
+    1.5 => hp_flt[i].Q;
 }
     
 // function for playing notes   
@@ -86,7 +89,27 @@ fun void playsynth(int player, int note, float parm1)
     else
         Std.mtof(note) => osc2.freq;
     
-    150.0 + 10000.0*parm1 => flt[player].freq;
+    // cacl filter params
+    //150.0 + 10000.0*parm1 => flt[player].freq;
+    0.3 => float thr1;
+    0.6 => float thr2;
+    Std.mtof(note)*1.5 => float lo_base;
+    Std.mtof(note)*0.2 => float hi_base;
+    if (parm1 < thr1 ) {
+        hi_base => hp_flt[player].freq;
+        lo_base + 10000.0*parm1/thr2 => lp_flt[player].freq; 
+    }
+    else if (parm1 < thr2) {
+        hi_base + 3000.0*(parm1-thr1)/(1.0 - thr1) => hp_flt[player].freq;
+        lo_base + 10000.0*parm1/thr2 => lp_flt[player].freq; 
+    }
+    else {
+        hi_base + 3000.0*(parm1-thr1)/(1.0 - thr1) => hp_flt[player].freq;
+        lo_base + 10000.0 => lp_flt[player].freq; 
+    }
+    
+    <<< "filts ", hp_flt[player].freq(), lp_flt[player].freq() >>>;  // DEBUG
+    
     env[player].keyOn();
     50::ms => now;
     env[player].keyOff();
