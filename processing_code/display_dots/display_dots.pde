@@ -8,62 +8,198 @@ int[] coor2 = new int[2];
 
 OscP5 oscP5;
 
+
+
+//
+// Metaball Class
+///////////////////
+
+class Metaball{
+  // Shape Members
+  float x,y;
+  float radius;
+  color value;
+  // Motion Members
+  float mspeedx, msizex, mcenterx;
+  float mspeedy, msizey, mcentery;
+  
+  // Constructor
+  Metaball (float cw, float ch){
+    //mspeedx = random(1,20);
+    //mspeedy = random(1,20);
+    msizex = random(cw/32,cw/3);
+    msizey = random(ch/32,ch/3);
+    mcenterx = random(msizex, cw-msizex);
+    mcentery = random(msizey, ch-msizey);
+    radius = random((cw+ch)/16,(cw+ch)/8);
+    colorMode(HSB, 1.0);
+    value = color(random(1.0),random(0.75,1.0),random(0.75,1.0));
+    Move(0);
+    
+  }
+  
+  // motion control
+  void Move (int t){
+    if (t == 0) {
+    x = coor1[0];
+    y = coor1[1];
+    }
+    else {
+      x = mouseX;
+      y = mouseY;
+    }
+  }
+  
+  // influence
+  float Influence(float a, float b){
+    float d = sqrt(((a-x)*(a-x)) + ((b-y)*(b-y)));
+    if (d < radius){
+      float dd = (0.707*d)/radius;
+      float g = ((dd*dd*dd*dd) - (dd*dd) + 0.25);
+      return (4*g);
+    }
+    else {
+      return 0.0;
+    }
+  }
+  
+  // draw 
+  void Draw(){
+    stroke(value);
+    fill(value,32);
+    ellipse(x, y, radius*2, radius*2);
+    noFill();
+    ellipse(x, y, radius*2, radius*2);
+    ellipse(x, y, 4, 4);
+  }
+  
+  color GetColor(){
+    return value;
+  }
+}
+
+
+
+/**
+ * Metaballs
+ **/
+
+
+// Canvas Size
+int width = 300;
+int height = 300;
+
+//Time
+float time = 0.0;
+
+//Metaballs
+int mbcount;
+Metaball[] mbs;
+
+// Misc
+float pi = 3.14159265;
+float d2r = (2*pi)/360.0;
+boolean debug = false;
+boolean sav = false;
+
+
+
+
 /* a NetAddress contains the ip address and port number of a remote location in the network. */
 NetAddress myBroadcastLocation; 
 
-void setup() {
-  size(600, 600);
-  frameRate(25);
+
+// setup
+void setup(){
+  // Basic Settings
+  size(width, height);
+  frameRate(30);
+  background(0);
+
+  // Init metaballs array
+  // randomSeed(7);
+  //mbcount = round(random(3,8));
+  mbcount = 2;
+  mbs = new Metaball[mbcount];
+  for (int i=0; i<mbcount; i++){
+    mbs[i] = new Metaball(width, height);
+  }
+  
+  // init drawing
+  smooth();
+  colorMode(RGB,255);
   
   /* create a new instance of oscP5. 
    * 8000 is the port number you are listening for incoming osc messages.
    */
   oscP5 = new OscP5(this, 8012);
-  
-  /* create a new NetAddress. a NetAddress is used when sending osc messages
-   * with the oscP5.send method.
-   */
-  
-  /* the address of the osc broadcast server */
-  myBroadcastLocation = new NetAddress("127.0.0.1", 8000);
 }
 
 
+void draw(){
+  // draw init
+  time+= 0.5;
+  background(0);
+
+  // Metaballs Motion
+  for (int m=0; m<mbcount; m++){
+    mbs[m].Move(m);
+  }
+
+  // Metaballs rendering
+  for (int i = 0; i < width; i++){
+    for (int j = 0; j < height; j++){
+      // init current inf
+      float inf = 0.00001;
+      float r = 0.0;
+      float g = 0.0; 
+      float b = 0.0;
+      ///*
+      for (int m=0; m < mbcount; m++){
+        inf += mbs[m].Influence(i, j);
+        color col = mbs[m].GetColor();
+        float val = mbs[m].Influence(i, j);
+        r += val * red(col);
+        g += val * green(col);
+        b += val * blue(col);
+      }
+      //*/
+      if (inf>0.5){
+        stroke (0.5*r,0.5*g,0.5*b);
+        //point(i,j);
+      }else{
+        if (inf>0.4){
+          float val = 1.5 * (1 - (20 * abs(inf-0.45)));
+          stroke(val * r,val * g,val * b);
+          point(i,j);
+        }
+      }
+      
+    }
+  }
+
+  // Debug display
+  if (debug){
+    for (int m=0; m<mbcount; m++){
+      mbs[m].Draw();
+    }
+  }
+}
+/*
 void draw() {
   background(0);
-  ellipse(coor1[0], coor1[1], 80, 80);
+  /*ellipse(coor1[0], coor1[1], 80, 80);
   ellipse(coor2[0], coor2[1], 40, 40);
-}
+  ellipse(coor2[0], coor2[1], 40, 40);
+  mousePressed();
+}*/
 
 
 void mousePressed() {
   /* create a new OscMessage with an address pattern, in this case /test. */
   OscMessage myOscMessage = new OscMessage("/test");
   /* add a value to the OscMessage */
-  int[] coordinates = new int[2];
-  coordinates[0] = mouseX;
-  coordinates[1] = mouseY;
-  myOscMessage.add(coordinates);
-  /* send the OscMessage to a remote location specified in myNetAddress */
-  oscP5.send(myOscMessage, myBroadcastLocation);
-}
-
-
-void keyPressed() {
-  OscMessage m;
-  switch(key) {
-    case('c'):
-      /* connect to the broadcaster */
-      m = new OscMessage("/server/connect", new Object[0]);
-      oscP5.flush(m, myBroadcastLocation);  
-      break;
-    case('d'):
-      /* disconnect from the broadcaster */
-      m = new OscMessage("/server/disconnect", new Object[0]);
-      oscP5.flush(m, myBroadcastLocation);  
-      break;
-
-  }  
+  ellipse(mouseX, mouseY, 80, 80);
 }
 
 
@@ -80,16 +216,16 @@ void oscEvent(OscMessage theOscMessage) {
       print("### received an osc message /test with typetag iff.");
       println(" values: " + player + ", " + x + ", " + y);
       if (player == 0) {
-        coor1[0] = int(x * 600);
-        coor1[1] = int(y * 600);
+        coor1[0] = int(x * 300);
+        coor1[1] = int(y * 300);
       }
       else if (player == 1) {
-        coor2[0] = int(x * 600);
-        coor2[1] = int(y * 600);
+        coor2[0] = int(x * 300);
+        coor2[1] = int(y * 300);
       }
       return;
     }
   }
   println("### received an osc message. with address pattern "+
-    theOscMessage.addrPattern()+" typetag "+ theOscMessage.typetag());
+    theOscMessage.addrPattern()+" typetag "+ theOscMessage.typetag() + coor1[0]+coor1[1]);
 }
