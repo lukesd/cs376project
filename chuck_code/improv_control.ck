@@ -16,12 +16,11 @@ OscEvent osc_in_event[g_num_players];
 for (0 => int i; i < g_num_players; i++) {
     player_inport[i] => osc_in[i].port;                   // port for receiving osc from player
     osc_in[i].listen();
-//    osc_in[i].event("/3/xy", "f f") @=> osc_in_event[i];
-//    osc_in[i].event("/3/xy", "f f") @=> osc_in_event[i];
+    osc_in[i].event("/3/xy", "f f") @=> osc_in_event[i];
 //    osc_in[i].event("/1/multixy3/1", "f f") @=> osc_in_event[i];
 //    osc_in[i].event("/1/multixy3/1", "f f") @=> osc_in_event[i];
 //    osc_in[i].event("/xy1/xy1", "f f") @=> osc_in_event[i];
-    osc_in[i].event("/touch", "f f") @=> osc_in_event[i];
+//    osc_in[i].event("/touch", "f f") @=> osc_in_event[i];
 
 }
 
@@ -31,13 +30,13 @@ osc_proc_out.setHost(proc_client, proc_outport);
 
 // setup MIDI
 // setup midi
-0 => int midi_device;                         // number of the device to open (see: chuck --probe)
-MidiIn midiIn;
-MidiMsg midi_msg;
-if( !midiIn.open( midi_device ) )
-    <<< "WARNING no MIDI device found with number ", midi_device>>>;
-else
-    <<< "MIDI device:", midiIn.num(), " -> ", midiIn.name() >>>;
+//0 => int midi_device;                         // number of the device to open (see: chuck --probe)
+//MidiIn midiIn;
+//MidiMsg midi_msg;
+//if( !midiIn.open( midi_device ) )
+//    <<< "WARNING no MIDI device found with number ", midi_device>>>;
+//else
+//    <<< "MIDI device:", midiIn.num(), " -> ", midiIn.name() >>>;
 
 // global variables for game and music calculation
 [36, 38, 41, 43, 45, 48, 50, 53, 55, 57, 60, 62, 65, 67, 69, 72, 74, 77, 79, 81] @=> int g_scale[];    // 2 8ve of pentatonic the scale that notes are played on
@@ -118,7 +117,7 @@ fun void playsynth(int player, int note, float parm1)
 // spork listeners --------------------------------------------
 spork ~ eventListener(0);
 spork ~ eventListener(1);
-spork ~ midiCtl();
+//spork ~ midiCtl();
 
 // make time --------------------------------------------------
 while( 1 )
@@ -167,6 +166,7 @@ fun void sendEventToProcc(int player, float x, float y)
 }
 
 // process for reading midi-control
+/*
 float g_midi_in_x;
 fun void midiCtl()
 {
@@ -191,4 +191,4 @@ fun void midiCtl()
             }
         }
     }
-}
+}*/
