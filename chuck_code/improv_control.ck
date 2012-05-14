@@ -1,6 +1,6 @@
 // improv_control.ck
 
-// global vars
+// networking stuff  -----------------------------------------------------------
 1 => int g_print_osc_debug;
 2 => int g_num_players;
 int player_inport[g_num_players];
@@ -16,29 +16,15 @@ OscEvent osc_in_event[g_num_players];
 for (0 => int i; i < g_num_players; i++) {
     player_inport[i] => osc_in[i].port;                   // port for receiving osc from player
     osc_in[i].listen();
-    osc_in[i].event("/3/xy", "f f") @=> osc_in_event[i];
-//    osc_in[i].event("/1/multixy3/1", "f f") @=> osc_in_event[i];
-//    osc_in[i].event("/1/multixy3/1", "f f") @=> osc_in_event[i];
-//    osc_in[i].event("/xy1/xy1", "f f") @=> osc_in_event[i];
-//    osc_in[i].event("/touch", "f f") @=> osc_in_event[i];
-
+    //osc_in[i].event("/3/xy", "f f") @=> osc_in_event[i];   // use this one for touchOSC "simple"
+    osc_in[i].event("/touch", "f f") @=> osc_in_event[i];    // use this one for touchOSC custom ipad or iphone
 }
 
 // setup OSC out to processing
 OscSend osc_proc_out;
 osc_proc_out.setHost(proc_client, proc_outport);
 
-// setup MIDI
-// setup midi
-//0 => int midi_device;                         // number of the device to open (see: chuck --probe)
-//MidiIn midiIn;
-//MidiMsg midi_msg;
-//if( !midiIn.open( midi_device ) )
-//    <<< "WARNING no MIDI device found with number ", midi_device>>>;
-//else
-//    <<< "MIDI device:", midiIn.num(), " -> ", midiIn.name() >>>;
-
-// global variables for game and music calculation
+// stuff for instruments -----------------------------------------------------------
 [36, 38, 41, 43, 45, 48, 50, 53, 55, 57, 60, 62, 65, 67, 69, 72, 74, 77, 79, 81] @=> int g_scale[];    // 2 8ve of pentatonic the scale that notes are played on
 g_scale.cap() => int g_num_notes;
 0.0 => float g_vert_min;                   // minimum vertical input value from iphone
@@ -57,7 +43,7 @@ fun int calcNote(float x)
     return note;
 }
 
-// stuff for synthesizing sound ---------------------------------
+// stuff for synthesizing sound
 LPF lp_flt[g_num_players];
 HPF hp_flt[g_num_players];
 ADSR env[g_num_players];
@@ -81,7 +67,7 @@ for (0 => int i; i < g_num_players; i++) {
 }
     
 // function for playing notes   
-fun void playsynth(int player, int note, float parm1)    
+fun void playSynth(int player, int note, float parm1)    
 {   
     if (player == 0) 
         Std.mtof(note) => osc1.freq;
@@ -89,7 +75,6 @@ fun void playsynth(int player, int note, float parm1)
         Std.mtof(note) => osc2.freq;
     
     // cacl filter params
-    //150.0 + 10000.0*parm1 => flt[player].freq;
     0.3 => float thr1;
     0.6 => float thr2;
     Std.mtof(note)*1.5 => float lo_base;
@@ -107,26 +92,136 @@ fun void playsynth(int player, int note, float parm1)
         lo_base + 10000.0 => lp_flt[player].freq; 
     }
     
-    <<< "filts ", hp_flt[player].freq(), lp_flt[player].freq() >>>;  // DEBUG
+    //<<< "filts ", hp_flt[player].freq(), lp_flt[player].freq() >>>;  // DEBUG
     
     env[player].keyOn();
     50::ms => now;
     env[player].keyOff();
 }
 
-// spork listeners --------------------------------------------
+// stuff for the sequencer -------------------------------------------------------
+100 => int bpm;
+4 => int ticks_per_beat;   // 1 tick = 16th note
+4 => int beats_per_bar;    // 4/4 time
+4 => int bars_per_pattern; // 4-bar loop
+
+60::second * (1.0/bpm) * (1.0/ticks_per_beat) => dur tick_t;  // seconds per tick = sec/min * min/beat * beat/tick
+ticks_per_beat * beats_per_bar * bars_per_pattern => int pattern_len; // ticks per pattern 
+
+// parameter boundaries
+[0.0, 0.0] @=> float g_lower_p[];   // pitch
+[1.0, 1.0] @=> float g_upper_p[];
+[0.0, 0.0] @=> float g_lower_t[];   // timbre
+[1.0, 1.0] @=> float g_upper_t[];
+[0.0, 0.0] @=> float g_lower_d[];   // density
+[1.0, 1.0] @=> float g_upper_d[];
+
+// the program
+[[0.0, 0.0, 0.0, 0.0],[0.0, 0.0, 0.0, 0.0]] @=> float g_prg_lower_p[][];   // pitch
+[[1.0, 1.0, 1.0, 1.0],[1.0, 1.0, 1.0, 1.0]] @=> float g_prg_upper_p[][];
+[[0.0, 0.0, 0.0, 0.0],[0.0, 0.0, 0.0, 0.0]] @=> float g_prg_lower_t[][];   // timbre
+[[1.0, 1.0, 1.0, 1.0],[1.0, 1.0, 1.0, 1.0]] @=> float g_prg_upper_t[][];
+[[0.0, 0.0, 0.0, 0.0],[0.0, 0.0, 0.0, 0.0]] @=> float g_prg_lower_d[][];   // density
+[[1.0, 1.0, 1.0, 1.0],[1.0, 1.0, 1.0, 1.0]] @=> float g_prg_upper_d[][];
+
+4 => int g_game_len;      // number of program changes in a game
+0 => int g_current_prg;   // current location in game
+  
+// send bounds to Processing
+fun void sendBoundsToProcc(int player)
+{
+    // send pitch and timbre
+    osc_proc_out.startMsg("/rect", "i f f f f");
+    player => osc_proc_out.addInt;
+    g_prg_lower_p[player][g_current_prg] => osc_proc_out.addFloat;
+    g_prg_upper_p[player][g_current_prg] => osc_proc_out.addFloat;
+    g_prg_lower_t[player][g_current_prg] => osc_proc_out.addFloat;
+    g_prg_upper_t[player][g_current_prg] => osc_proc_out.addFloat;
+    
+    // send density
+    osc_proc_out.startMsg("/dens_limit", "i f f");
+    player => osc_proc_out.addInt;
+    g_prg_lower_d[player][g_current_prg] => osc_proc_out.addFloat;
+    g_prg_upper_d[player][g_current_prg] => osc_proc_out.addFloat;
+}
+  
+
+// event for ticks
+class tickEvent extends Event
+{
+    int tick_num;
+}
+tickEvent tick_e;
+
+// audio processing
+SndBuf hh_buf => Gain hh_gain => dac; // hi hat
+SndBuf kk_buf => Gain kk_gain => dac; // kick
+SndBuf sn_buf => Gain sn_gain => dac; // snare
+SndBuf cr_buf => Gain cr_gain => dac; // crash
+
+"hihat.wav"  => hh_buf.read;
+"kick.wav"   => kk_buf.read;
+"snare.wav"  => sn_buf.read;
+"crash.wav" => cr_buf.read;
+
+hh_buf.samples() => hh_buf.pos;
+kk_buf.samples() => kk_buf.pos;
+sn_buf.samples() => sn_buf.pos;
+cr_buf.samples() => cr_buf.pos;
+
+[Std.dbtorms(100-12), Std.dbtorms(100-9), Std.dbtorms(100-6)] @=> float note_gains[];
+
+// process to play sequencer 
+0 => int g_seq_on;
+fun void playSequence()
+{
+    1 => g_seq_on;     // start the sequencer
+    0 => int tick_ct;
+    0 => g_current_prg;
+    sendBoundsToProcc(0);
+    sendBoundsToProcc(1);
+    <<< "program ", g_current_prg >>>;
+    while( g_seq_on ) {
+        tick_t => now;
+        tick_ct => tick_e.tick_num;
+        tick_e.broadcast();
+        tick_ct++;
+        if (tick_ct == pattern_len) {
+            0 => tick_ct;
+            g_current_prg++;
+            if (g_current_prg == g_game_len ) {
+                0 => g_seq_on;
+                <<< "game finished!", "" >>>;
+            }
+            else {
+                sendBoundsToProcc(0);
+                sendBoundsToProcc(1);
+                <<< "program ", g_current_prg >>>;
+            }
+        }
+    }
+}
+
+
+// spork processes -----------------------------------------------------------------
 spork ~ eventListener(0);
 spork ~ eventListener(1);
+spork ~ seqHandler1( tick_e );
+spork ~ seqHandler2( tick_e );
+spork ~ seqHandler3( tick_e );
+spork ~ seqHandler4( tick_e );
+spork ~ keyboardListener();
+
 //spork ~ midiCtl();
 
-// make time --------------------------------------------------
+// make time ---------------------------------------------------------------------
 while( 1 )
 {
     1::second => now;
 }
 
-
-// processes for listening for osc events ---------------------
+// more functions and processes ---------------------------------------------------
+// processes for listening for osc events 
 fun void eventListener(int player)
 {
     player => int pl;
@@ -146,15 +241,13 @@ fun void eventListener(int player)
                 <<< " in event from player: ", pl, x_in, y_synth_in, note >>>;
             }
             // play note
-            spork ~playsynth(pl, note, x_in);
+            spork ~playSynth(pl, note, x_in);
             
             // send message to processing
             sendEventToProcc(pl, x_in, y_procc_in);
         }
     }
 }
-
-
 
 // send new note events to processing
 fun void sendEventToProcc(int player, float x, float y)
@@ -165,30 +258,106 @@ fun void sendEventToProcc(int player, float x, float y)
     y => osc_proc_out.addFloat;
 }
 
-// process for reading midi-control
-/*
-float g_midi_in_x;
-fun void midiCtl()
+// the hi-hat sequence
+fun void seqHandler1( tickEvent event )
 {
-    while( true )
+    // 1, e, &, a, 2, e, &, a, 3, e, &, a, 4, e, &, a,   
+    [1, 0, 2, 0, 1, 0, 2, 1, 1, 0, 2, 0, 1, 2, 2, 3 ] @=> int seq[];
+    while( 1 ) {
+        event => now;
+        seq[ event.tick_num % seq.cap() ] => int note;
+        if ( note ) {
+            note_gains[ note -1 ] => hh_gain.gain;
+            0 => hh_buf.pos;
+        }
+    }
+}
+
+// the kick sequence
+fun void seqHandler2( tickEvent event )
+{
+    // 1, e, &, a, 2, e, &, a, 3, e, &, a, 4, e, &, a,   
+    [2, 0, 0, 0, 2, 0, 0, 0, 2, 0, 0, 0, 2, 0, 1, 0 ] @=> int seq[];
+    while( 1 ) {
+        event => now;
+        seq[ event.tick_num % seq.cap() ] => int note;
+        if ( note ) {
+            note_gains[ note -1 ] => kk_gain.gain;
+            0 => kk_buf.pos;
+        }
+    }
+}
+
+// the snare sequence
+fun void seqHandler3( tickEvent event )
+{
+  // 1, e, &, a, 2, e, &, a, 3, e, &, a, 4, e, &, a, 1, e, &, a, 2, e, &, a, 3, e, &, a, 4, e, &, a,     
+    [0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 3, 1, 0, 0,
+     0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 1, 3, 1, 3, 0  ] @=> int seq[];
+    while( 1 ) {
+        event => now;
+        seq[ event.tick_num % seq.cap() ] => int note;
+        if ( note ) {
+            note_gains[ note-1 ] => sn_gain.gain;
+            0 => sn_buf.pos;
+        }
+    }
+}
+
+// the crash sequence
+fun void seqHandler4( tickEvent event )
+{
+    // 1, e, &, a, 2, e, &, a, 3, e, &, a, 4, e, &, a,   
+    [2, 0, 0, 0, 2, 0, 0, 0, 2, 0, 0, 0, 2, 0, 1, 0 ] @=> int seq[];
+    while( 1 ) {
+        event => now;
+        if ( event.tick_num == 0) {
+            0 => cr_buf.pos;
+        }
+    }
+}
+
+
+
+
+// keyboard listener 
+fun void keyboardListener()
+{
+    Hid hiKbd;
+    HidMsg msgKbd;
+    
+    // open keyboard
+    0 => int device;
+    if( !hiKbd.openKeyboard( device ) ) me.exit();
+    <<< "keyboard '", hiKbd.name(), "' ready" >>>;
+    
+    while ( 1 )
     {
-        // wait on the event 'midiIn'
-        midiIn => now;       
-        // get the message(s)
-        while( midiIn.recv(midi_msg) )
+        // wait on event
+        hiKbd => now;
+        while( hiKbd.recv( msgKbd ) )
         {
-            if (midi_msg.data1 == 176 && midi_msg.data2 == 13) {
-                midi_msg.data3 / 127.0 => g_midi_in_x;
-                calcNote(midi_msg.data3 / 127.0) => int note;
-            }
-            else if (midi_msg.data1 == 176 && midi_msg.data2 == 14) {
-                midi_msg.data3 / 127.0 => float midi_in_y;
-                calcNote(midi_in_y) => int note;
-                spork ~playsynth(0, note, g_midi_in_x);
-            }
-            else {
-                <<< "midi in: ", midi_msg.data1, midi_msg.data2, midi_msg.data3 >>>; 
+            // check for action type
+            if( msgKbd.isButtonDown() )
+            {
+                // space key
+                if( msgKbd.which == 44) {
+                    if ( g_seq_on ) {
+                        0 => g_seq_on;      // stop the sequencer
+                        <<< "stopping sequencer ", "" >>>;
+                    }
+                    else {
+                        // call function to send values here
+                        spork ~ playSequence();     
+                        <<< "starting  sequencer ", "" >>>;
+                    }
+                }                  
+                else {
+                    //<<< "unknown key ", msgKbd.which >>>;
+                }
             }
         }
     }
-}*/
+}
+
+
