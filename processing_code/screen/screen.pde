@@ -58,6 +58,10 @@ int padding = 20;
 // Origin
 int x_screen_origin = 2*padding + bar_width;
 int y_screen_origin = 2*padding + bar_width;
+int x_density1_origin = padding;
+int y_density1_origin = 2*padding + bar_width + screen_height;
+int x_density2_origin = 3*padding + bar_width + screen_width;
+int y_density2_origin = 2*padding + bar_width + screen_height;
 
 // Canvas Size
 int width = screen_width + 4*padding + 2*bar_width;
@@ -118,13 +122,13 @@ void drawActivePlayer2() {
 }
 
 void drawPlayer1Rectangle() {
-  noFill();
+  fill(255);
   stroke(255, 0, 0);
   rect(
-    x_screen_origin + player1Rectangle[2],
-    y_screen_origin + player1Rectangle[1],
-    player1Rectangle[3] - player1Rectangle[2],
-    player1Rectangle[1] - player1Rectangle[0]
+    x_screen_origin + player1Rectangle[0],
+    y_screen_origin + player1Rectangle[3],
+    player1Rectangle[1] - player1Rectangle[0],
+    player1Rectangle[3] - player1Rectangle[2]
   );
 }
 
@@ -154,7 +158,7 @@ void drawPlayer1DensityBoundaries() {
   stroke(255, 0, 0);
   rect(
     padding,
-    2*padding + bar_width + player1DensityBoundaries[1],
+    y_density1_origin - player1DensityBoundaries[1],
     bar_width,
     player1DensityBoundaries[1] - player1DensityBoundaries[0]
   );
@@ -164,8 +168,8 @@ void drawPlayer2DensityBoundaries() {
   noFill();
   stroke(0, 255, 0);
   rect(
-    3*padding + bar_width + screen_width,
-    2*padding + bar_width + player2DensityBoundaries[1],
+    x_density2_origin,
+    y_density2_origin - player2DensityBoundaries[1],
     bar_width,
     player2DensityBoundaries[1] - player2DensityBoundaries[0]
   );
@@ -352,10 +356,10 @@ void getPlayerPosition(OscMessage theOscMessage) {
 void getRectangleBoundaries(OscMessage theOscMessage) {
   // parse theOscMessage and extract the values from the osc message arguments.
   int player = theOscMessage.get(0).intValue();  // get the first osc argument
-  float x1 = theOscMessage.get(1).floatValue(); // get the second osc argument
-  float x2 = theOscMessage.get(2).floatValue(); // get the third osc argument
-  float y1 = theOscMessage.get(3).floatValue(); // get the third osc argument
-  float y2 = theOscMessage.get(4).floatValue(); // get the third osc argument
+  float y1 = theOscMessage.get(1).floatValue(); // get the second osc argument
+  float y2 = theOscMessage.get(2).floatValue(); // get the third osc argument
+  float x1 = theOscMessage.get(3).floatValue(); // get the third osc argument
+  float x2 = theOscMessage.get(4).floatValue(); // get the third osc argument
   
   // First player
   if (player == 0) {
@@ -379,20 +383,20 @@ void getRectangleBoundaries(OscMessage theOscMessage) {
 
 void getDensityBoundaries(OscMessage theOscMessage) {
   // parse theOscMessage and extract the values from the osc message arguments.
-  int player = theOscMessage.get(0).intValue();  // get the first osc argument
-  float d1 = theOscMessage.get(1).floatValue(); // get the second osc argument
-  float d2 = theOscMessage.get(1).floatValue(); // get the second osc argument
+  int player = theOscMessage.get(0).intValue();
+  float d1 = theOscMessage.get(1).floatValue();
+  float d2 = theOscMessage.get(2).floatValue();
   
   // First player
   if (player == 0) {
     player1DensityBoundaries[0] = int(d1 * screen_height);
-    player1DensityBoundaries[0] = int(d2 * screen_height);
+    player1DensityBoundaries[1] = int(d2 * screen_height);
     player1DensityBoundariesIndicator = true;
   }
   // Second player
   else if (player == 1) {
     player2DensityBoundaries[0] = int(d1 * screen_height);
-    player2DensityBoundaries[0] = int(d2 * screen_height);
+    player2DensityBoundaries[1] = int(d2 * screen_height);
     player2DensityBoundariesIndicator = true;
   }
   

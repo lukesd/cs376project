@@ -16,8 +16,8 @@ OscEvent osc_in_event[g_num_players];
 for (0 => int i; i < g_num_players; i++) {
     player_inport[i] => osc_in[i].port;                   // port for receiving osc from player
     osc_in[i].listen();
-    //osc_in[i].event("/3/xy", "f f") @=> osc_in_event[i];   // use this one for touchOSC "simple"
-    osc_in[i].event("/touch", "f f") @=> osc_in_event[i];    // use this one for touchOSC custom ipad or iphone
+    osc_in[i].event("/3/xy", "f f") @=> osc_in_event[i];   // use this one for touchOSC "simple"
+    //osc_in[i].event("/touch", "f f") @=> osc_in_event[i];    // use this one for touchOSC custom ipad or iphone
 }
 
 // setup OSC out to processing
@@ -117,12 +117,12 @@ ticks_per_beat * beats_per_bar * bars_per_pattern => int g_pattern_len; // ticks
 [1.0, 1.0] @=> float g_upper_d[];
 
 // the program
-[[0.0, 0.0, 0.0, 0.0],[0.0, 0.0, 0.0, 0.0]] @=> float g_prg_lower_p[][];   // pitch
-[[1.0, 1.0, 1.0, 1.0],[1.0, 1.0, 1.0, 1.0]] @=> float g_prg_upper_p[][];
-[[0.0, 0.0, 0.0, 0.0],[0.0, 0.0, 0.0, 0.0]] @=> float g_prg_lower_t[][];   // timbre
-[[1.0, 1.0, 1.0, 1.0],[1.0, 1.0, 1.0, 1.0]] @=> float g_prg_upper_t[][];
-[[0.0, 0.0, 0.0, 0.0],[0.0, 0.0, 0.0, 0.0]] @=> float g_prg_lower_d[][];   // density
-[[1.0, 1.0, 1.0, 1.0],[1.0, 1.0, 1.0, 1.0]] @=> float g_prg_upper_d[][];
+[[0.0, 0.3, 0.0, 0.0],[0.5, 0.3, 0.2, 0.6]] @=> float g_prg_lower_p[][];   // pitch
+[[0.5, 0.4, 1.0, 1.0],[1.0, 0.7, 0.7, 0.8]] @=> float g_prg_upper_p[][];
+[[0.1, 0.3, 0.6, 0.4],[0.5, 0.2, 0.3, 0.0]] @=> float g_prg_lower_t[][];   // timbre
+[[0.6, 0.4, 1.0, 0.6],[1.0, 0.3, 0.6, 0.5]] @=> float g_prg_upper_t[][];
+[[0.5, 0.3, 0.4, 0.3],[0.3, 0.0, 0.0, 0.0]] @=> float g_prg_lower_d[][];   // density
+[[1.0, 0.5, 0.6, 0.9],[1.0, 1.0, 1.0, 1.0]] @=> float g_prg_upper_d[][];
 
 4 => int g_game_len;      // number of program changes in a game
 0 => int g_current_prg;   // current location in game
@@ -373,4 +373,8 @@ fun void keyboardListener()
 }
 
 
+<<<<<<< HEAD
   
+=======
+ 
+>>>>>>> Coordinates fixes
