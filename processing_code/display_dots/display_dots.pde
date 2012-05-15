@@ -45,8 +45,8 @@ class Metaball{
     y = coor1[1];
     }
     else {
-      x = mouseX;
-      y = mouseY;
+      x = coor2[0];
+      y = coor2[1];
     }
   }
   
