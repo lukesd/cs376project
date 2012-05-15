@@ -33,9 +33,6 @@ boolean player2DensityIndicator = false;
 boolean player1DensityBoundariesIndicator = false;
 boolean player2DensityBoundariesIndicator = false;
 
-int progress = 0;
-boolean progressIndicator = false;
-
 int time = 0;
 boolean timeIndicator = false;
 
@@ -176,7 +173,7 @@ void drawPlayer2DensityBoundaries() {
 
 void drawTime() {
   fill(255);
-  rect(2*padding + bar_width, padding, screen_width, bar_width*progress);
+  rect(2*padding + bar_width, padding, screen_width, bar_width*time);
 }
 
 
@@ -210,6 +207,13 @@ void setup(){
 void resetTriggers() {
   player1Playing = false;
   player2Playing = false;
+  player1RectangleIndicator = false;
+  player2RectangleIndicator = false;
+  player1DensityIndicator = false;
+  player2DensityIndicator = false;
+  player1DensityBoundariesIndicator = false;
+  player2DensityBoundariesIndicator = false;
+  timeIndicator = false;
 }
 
 void draw() {
@@ -271,14 +275,6 @@ void draw() {
   
   
   resetTriggers();
-}
-
-
-void mousePressed() {
-  /* create a new OscMessage with an address pattern, in this case /test. */
-  OscMessage myOscMessage = new OscMessage("/test");
-  /* add a value to the OscMessage */
-  ellipse(mouseX, mouseY, 80, 80);
 }
 
 
