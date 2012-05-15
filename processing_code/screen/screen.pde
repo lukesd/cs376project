@@ -57,7 +57,7 @@ int padding = 20;
 
 // Origin
 int x_screen_origin = 2*padding + bar_width;
-int y_screen_origin = 2*padding + bar_width;
+int y_screen_origin = 2*padding + bar_width + screen_height;
 int x_density1_origin = padding;
 int y_density1_origin = 2*padding + bar_width + screen_height;
 int x_density2_origin = 3*padding + bar_width + screen_width;
@@ -72,7 +72,7 @@ int height = screen_height + 3*padding + bar_width;
 //////////////////////
 
 void drawScreen() {
-  rect(x_screen_origin, y_screen_origin, screen_width, screen_height);
+  rect(x_screen_origin, y_screen_origin - screen_height , screen_width, screen_height);
 }
 
 void drawLeftBar() {
@@ -102,31 +102,31 @@ void drawCanevas() {
 void drawPlayer1() {
   noFill();
   stroke(255);
-  ellipse(x_screen_origin + player1Position[0], y_screen_origin + player1Position[1], 80, 80);
+  ellipse(x_screen_origin + player1Position[0], y_screen_origin - screen_height + player1Position[1], 80, 80);
 }
 
 void drawActivePlayer1() {
   fill(255);
-  ellipse(x_screen_origin + player1Position[0], y_screen_origin + player1Position[1], 80, 80);
+  ellipse(x_screen_origin + player1Position[0], y_screen_origin - screen_height + player1Position[1], 80, 80);
 }
 
 void drawPlayer2() {
   noFill();
   stroke(255);
-  ellipse(x_screen_origin + player2Position[0], y_screen_origin + player2Position[1], 40, 40);
+  ellipse(x_screen_origin + player2Position[0], y_screen_origin - screen_height  + player2Position[1], 40, 40);
 }
 
 void drawActivePlayer2() {
   fill(255);
-  ellipse(x_screen_origin + player2Position[0], y_screen_origin + player2Position[1], 80, 80);
+  ellipse(x_screen_origin + player2Position[0], y_screen_origin - screen_height  + player2Position[1], 80, 80);
 }
 
 void drawPlayer1Rectangle() {
-  fill(255);
+  noFill();
   stroke(255, 0, 0);
   rect(
     x_screen_origin + player1Rectangle[0],
-    y_screen_origin + player1Rectangle[3],
+    y_screen_origin - player1Rectangle[3],
     player1Rectangle[1] - player1Rectangle[0],
     player1Rectangle[3] - player1Rectangle[2]
   );
@@ -136,10 +136,10 @@ void drawPlayer2Rectangle() {
   noFill();
   stroke(0, 255, 0);
   rect(
-    x_screen_origin + player2Rectangle[2],
-    y_screen_origin + player2Rectangle[1],
-    player2Rectangle[3] - player2Rectangle[2],
-    player2Rectangle[1] - player2Rectangle[0]
+    x_screen_origin + player2Rectangle[0],
+    y_screen_origin - player2Rectangle[3],
+    player2Rectangle[1] - player2Rectangle[0],
+    player2Rectangle[3] - player2Rectangle[2]
   );
 }
 
@@ -177,7 +177,7 @@ void drawPlayer2DensityBoundaries() {
 
 void drawTime() {
   fill(255);
-  rect(2*padding + bar_width, padding, screen_width, bar_width*time);
+  rect(2*padding + bar_width, padding, screen_width*time, bar_width);
 }
 
 
@@ -211,12 +211,12 @@ void setup(){
 void resetTriggers() {
   player1Playing = false;
   player2Playing = false;
-  player1RectangleIndicator = false;
-  player2RectangleIndicator = false;
+  //player1RectangleIndicator = false;
+  //player2RectangleIndicator = false;
   player1DensityIndicator = false;
   player2DensityIndicator = false;
-  player1DensityBoundariesIndicator = false;
-  player2DensityBoundariesIndicator = false;
+  //player1DensityBoundariesIndicator = false;
+  //player2DensityBoundariesIndicator = false;  
   timeIndicator = false;
 }
 
@@ -244,12 +244,12 @@ void draw() {
   
   // Player1 Rectangle
   if (player1RectangleIndicator) {
-    drawTime();
+    drawPlayer1Rectangle();
   }
   
   // Player2 Rectangle
   if (player2RectangleIndicator) {
-    drawTime();
+    drawPlayer2Rectangle();
   }
   
   // Player1 Density
@@ -405,8 +405,8 @@ void getDensityBoundaries(OscMessage theOscMessage) {
 
 void getDensity(OscMessage theOscMessage) {
   // parse theOscMessage and extract the values from the osc message arguments.
-  int player = theOscMessage.get(0).intValue();  // get the first osc argument
-  float d = theOscMessage.get(1).floatValue(); // get the second osc argument
+  int player = theOscMessage.get(0).intValue();
+  float d = theOscMessage.get(1).floatValue();
   
   // First player
   if (player == 0) {
@@ -422,7 +422,7 @@ void getDensity(OscMessage theOscMessage) {
 
 void getTime(OscMessage theOscMessage) {
   // parse theOscMessage and extract the values from the osc message arguments.
-  float t = theOscMessage.get(1).floatValue(); // get the second osc argument
+  float t = theOscMessage.get(0).floatValue();
   
   time = int(t * screen_width);
   timeIndicator = true;
