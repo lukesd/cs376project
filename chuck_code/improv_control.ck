@@ -106,7 +106,7 @@ fun void playSynth(int player, int note, float parm1)
 4 => int bars_per_pattern; // 4-bar loop
 
 60::second * (1.0/bpm) * (1.0/ticks_per_beat) => dur tick_t;  // seconds per tick = sec/min * min/beat * beat/tick
-ticks_per_beat * beats_per_bar * bars_per_pattern => int pattern_len; // ticks per pattern 
+ticks_per_beat * beats_per_bar * bars_per_pattern => int g_pattern_len; // ticks per pattern 
 
 // parameter boundaries
 [0.0, 0.0] @=> float g_lower_p[];   // pitch
@@ -186,7 +186,7 @@ fun void playSequence()
         tick_ct => tick_e.tick_num;
         tick_e.broadcast();
         tick_ct++;
-        if (tick_ct == pattern_len) {
+        if (tick_ct == g_pattern_len) {
             0 => tick_ct;
             g_current_prg++;
             if (g_current_prg == g_game_len ) {
@@ -202,6 +202,19 @@ fun void playSequence()
     }
 }
 
+// send time progress
+fun void sendTimeProgress( tickEvent event )
+{
+    while( 1 ) {
+        event => now;
+        if ( (event.tick_num % 4) == 0 ) {
+            osc_proc_out.startMsg("/time", "f");
+            event.tick_num / g_pattern_len => osc_proc_out.addFloat;
+        }
+    }
+}
+
+
 
 // spork processes -----------------------------------------------------------------
 spork ~ eventListener(0);
@@ -211,6 +224,7 @@ spork ~ seqHandler2( tick_e );
 spork ~ seqHandler3( tick_e );
 spork ~ seqHandler4( tick_e );
 spork ~ keyboardListener();
+spork ~ sendTimeProgress( tick_e );
 
 //spork ~ midiCtl();
 
@@ -318,8 +332,6 @@ fun void seqHandler4( tickEvent event )
 }
 
 
-
-
 // keyboard listener 
 fun void keyboardListener()
 {
@@ -361,3 +373,4 @@ fun void keyboardListener()
 }
 
 
+  
