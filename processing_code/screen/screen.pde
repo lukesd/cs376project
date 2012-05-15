@@ -46,8 +46,8 @@ boolean timeIndicator = false;
 //////////
 
 // Screen size
-int screen_width = 300;
-int screen_height = 300;
+int screen_width = 960;
+int screen_height = 480;
 
 // Bars width
 int bar_width = 30;
@@ -177,7 +177,7 @@ void drawPlayer2DensityBoundaries() {
 
 void drawTime() {
   fill(255);
-  rect(2*padding + bar_width, padding, screen_width*time, bar_width);
+  rect(2*padding + bar_width, padding, time, bar_width);
 }
 
 
@@ -217,7 +217,7 @@ void resetTriggers() {
   player2DensityIndicator = false;
   //player1DensityBoundariesIndicator = false;
   //player2DensityBoundariesIndicator = false;  
-  timeIndicator = false;
+  //timeIndicator = false;
 }
 
 void draw() {
@@ -426,4 +426,6 @@ void getTime(OscMessage theOscMessage) {
   
   time = int(t * screen_width);
   timeIndicator = true;
+  
+  println("### ### Time: " + t);
 }
