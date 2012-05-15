@@ -361,18 +361,20 @@ void getRectangleBoundaries(OscMessage theOscMessage) {
   if (player == 0) {
     player1Rectangle[0] = int(x1 * screen_width);
     player1Rectangle[1] = int(x2 * screen_width);
-    player1Rectangle[1] = int(y1 * screen_height);
-    player1Rectangle[1] = int(y2 * screen_height);
+    player1Rectangle[2] = int(y1 * screen_height);
+    player1Rectangle[3] = int(y2 * screen_height);
     player1RectangleIndicator = true;
   }
   // Second player
   else if (player == 1) {
     player2Rectangle[0] = int(x1 * screen_width);
     player2Rectangle[1] = int(x2 * screen_width);
-    player2Rectangle[1] = int(y1 * screen_height);
-    player2Rectangle[1] = int(y2 * screen_height);
+    player2Rectangle[2] = int(y1 * screen_height);
+    player2Rectangle[3] = int(y2 * screen_height);
     player2RectangleIndicator = true;
   }
+  
+  println("### ### Rectangle boundaries for player " + player + ": x1 = " + x1 + ", x2 = " + x2 + " y1 = " + y1 + ", y2 = " + y2);
 }
 
 void getDensityBoundaries(OscMessage theOscMessage) {
@@ -393,6 +395,8 @@ void getDensityBoundaries(OscMessage theOscMessage) {
     player2DensityBoundaries[0] = int(d2 * screen_height);
     player2DensityBoundariesIndicator = true;
   }
+  
+  println("### ### Density boundaries for player " + player + ": low = " + d1 +", high = " + d2);
 }
 
 void getDensity(OscMessage theOscMessage) {
