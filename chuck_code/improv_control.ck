@@ -99,6 +99,46 @@ fun void playSynth(int player, int note, float parm1)
     env[player].keyOff();
 }
 
+// duration stuff:
+// fill a circular buffer with note times
+// to calculate density: calculate number of events within a time window,
+// where the window is the lesser of g_window_len or the range or times in the buffer
+class densityQueue
+{
+    20 => static int queue_len;
+    time buffer[queue_len];
+    0 => int write_ptr;
+    queue_len - 1 => int read_ptr;
+    
+    10::second => dur time_window;
+    
+    fun void addEvent( time note_time )
+    {
+        note_time => buffer[ write_ptr ];
+        write_ptr--;
+        read_ptr--;
+        if (write_ptr < 0)
+            queue_len - 1 => write_ptr;
+        if (read_ptr < 0)
+            queue_len - 1 => read_ptr;
+    }
+    
+    fun float calcDensity( time current_time )
+    {
+        current_time - time_window => time early_time;
+        read_ptr => int temp_ptr;
+        1 => int num_read;
+        0 => int num_notes;
+        buffer[ temp_ptr ] => time note_time;
+//        while( (note_time > early_time) && (note_count < queue_len ) ) {
+//            
+//         }
+            
+             
+    }
+    
+}
+
 // stuff for the sequencer -------------------------------------------------------
 100 => int bpm;
 4 => int ticks_per_beat;   // 1 tick = 16th note
@@ -209,7 +249,9 @@ fun void sendTimeProgress( tickEvent event )
         event => now;
         if ( (event.tick_num % 4) == 0 ) {
             osc_proc_out.startMsg("/time", "f");
-            event.tick_num / g_pattern_len => osc_proc_out.addFloat;
+            (event.tick_num)$float  / g_pattern_len => float temp; 
+            temp => osc_proc_out.addFloat;
+            <<< "time progress", temp >>>;  // DEBUG
         }
     }
 }
