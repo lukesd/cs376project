@@ -249,7 +249,7 @@ fun void sendTimeProgress( tickEvent event )
         event => now;
         if ( (event.tick_num % 4) == 0 ) {
             osc_proc_out.startMsg("/time", "f");
-            (event.tick_num)$float  / g_pattern_len => float temp; 
+            (event.tick_num + 4)$float  / g_pattern_len => float temp; 
             temp => osc_proc_out.addFloat;
             <<< "time progress", temp >>>;  // DEBUG
         }
@@ -413,10 +413,3 @@ fun void keyboardListener()
         }
     }
 }
-
-
-<<<<<<< HEAD
-  
-=======
- 
->>>>>>> Coordinates fixes
