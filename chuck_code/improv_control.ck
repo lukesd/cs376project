@@ -81,6 +81,7 @@ class densityQueue
     
     fun void addEvent( time note_time )
     {
+        //<<< "DEBUG", "addEvent" >>>;
         note_time => buffer[ write_ptr ];
         write_ptr--;
         read_ptr--;
@@ -92,17 +93,20 @@ class densityQueue
     
     fun float calcDensity( time current_time )
     {
+        //<<< "DEBUG", "calcDensity" >>>;
         current_time - time_window => time early_time;
         read_ptr => int temp_ptr;
+        //<<< "temp_ptr", temp_ptr >>>;
         buffer[ temp_ptr ] => time note_time;
         0 => int num_notes;
         0.0 => float density;
+        //<<< "note time ", note_time, "early_time ", early_time >>>;
         while( (note_time > early_time) && (num_notes < queue_len ) ) {
             num_notes++;
             num_notes / ((current_time - note_time)/1::second) => float density;
             temp_ptr--;
             if (temp_ptr < 0)
-                queue_len => temp_ptr;
+                queue_len - 1 => temp_ptr;
             buffer[ temp_ptr ] => note_time;
         }
         return density;             
@@ -151,7 +155,7 @@ fun void reportDensities()
     while( 1 ) {
         que[0].calcDensity( now ) => float dens1;
         que[1].calcDensity( now ) => float dens2;
-        <<< " Densities: ", dens1, dens2 >>>;
+        //<<< " Densities: ", dens1, dens2 >>>;
         0.5::second => now;
     }
 }
