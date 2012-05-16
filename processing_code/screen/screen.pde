@@ -46,14 +46,14 @@ boolean timeIndicator = false;
 //////////
 
 // Screen size
-int screen_width = 960;
-int screen_height = 480;
+int screen_width = 640;
+int screen_height = 880;
 
 // Bars width
-int bar_width = 30;
+int bar_width = 50;
 
 // Padding
-int padding = 20;
+int padding = 30;
 
 // Origin
 int x_screen_origin = 2*padding + bar_width;
@@ -101,29 +101,31 @@ void drawCanevas() {
 
 void drawPlayer1() {
   noFill();
-  stroke(255);
+  stroke(255, 0, 0);
   ellipse(x_screen_origin + player1Position[0], y_screen_origin - screen_height + player1Position[1], 80, 80);
 }
 
 void drawActivePlayer1() {
-  fill(255);
+  stroke(255, 0, 0);
+  fill(255, 0, 0);
   ellipse(x_screen_origin + player1Position[0], y_screen_origin - screen_height + player1Position[1], 80, 80);
 }
 
 void drawPlayer2() {
   noFill();
-  stroke(255);
-  ellipse(x_screen_origin + player2Position[0], y_screen_origin - screen_height  + player2Position[1], 40, 40);
+  stroke(0, 255, 0);
+  ellipse(x_screen_origin + player2Position[0], y_screen_origin - screen_height  + player2Position[1], 80, 80);
 }
 
 void drawActivePlayer2() {
-  fill(255);
+  stroke(0, 255, 0);
+  fill(0, 255, 0);
   ellipse(x_screen_origin + player2Position[0], y_screen_origin - screen_height  + player2Position[1], 80, 80);
 }
 
 void drawPlayer1Rectangle() {
   noFill();
-  stroke(255, 0, 0);
+  stroke(0, 0, 255);
   rect(
     x_screen_origin + player1Rectangle[0],
     y_screen_origin - player1Rectangle[3],
@@ -134,7 +136,7 @@ void drawPlayer1Rectangle() {
 
 void drawPlayer2Rectangle() {
   noFill();
-  stroke(0, 255, 0);
+  stroke(0, 0, 255);
   rect(
     x_screen_origin + player2Rectangle[0],
     y_screen_origin - player2Rectangle[3],
