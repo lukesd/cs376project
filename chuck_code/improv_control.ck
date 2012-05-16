@@ -16,8 +16,8 @@ OscEvent osc_in_event[g_num_players];
 for (0 => int i; i < g_num_players; i++) {
     player_inport[i] => osc_in[i].port;                   // port for receiving osc from player
     osc_in[i].listen();
-    osc_in[i].event("/3/xy", "f f") @=> osc_in_event[i];   // use this one for touchOSC "simple"
-    //osc_in[i].event("/touch", "f f") @=> osc_in_event[i];    // use this one for touchOSC custom ipad or iphone
+    //osc_in[i].event("/3/xy", "f f") @=> osc_in_event[i];   // use this one for touchOSC "simple"
+    osc_in[i].event("/touch", "f f") @=> osc_in_event[i];    // use this one for touchOSC custom ipad or iphone
 }
 
 // setup OSC out to processing
@@ -65,6 +65,51 @@ for (0 => int i; i < g_num_players; i++) {
     2.0 => lp_flt[i].Q;
     1.5 => hp_flt[i].Q;
 }
+
+// duration stuff:
+// fill a circular buffer with note times
+// to calculate density: calculate number of events within a time window,
+// where the window is the lesser of g_window_len or the range or times in the buffer
+class densityQueue
+{
+    20 => static int queue_len;
+    time buffer[queue_len];
+    0 => int write_ptr;
+    queue_len - 1 => int read_ptr;
+    
+    10::second => dur time_window;
+    
+    fun void addEvent( time note_time )
+    {
+        note_time => buffer[ write_ptr ];
+        write_ptr--;
+        read_ptr--;
+        if (write_ptr < 0)
+            queue_len - 1 => write_ptr;
+        if (read_ptr < 0)
+            queue_len - 1 => read_ptr;
+    }
+    
+    fun float calcDensity( time current_time )
+    {
+        current_time - time_window => time early_time;
+        read_ptr => int temp_ptr;
+        buffer[ temp_ptr ] => time note_time;
+        0 => int num_notes;
+        0.0 => float density;
+        while( (note_time > early_time) && (num_notes < queue_len ) ) {
+            num_notes++;
+            num_notes / ((current_time - note_time)/1::second) => float density;
+            temp_ptr--;
+            if (temp_ptr < 0)
+                queue_len => temp_ptr;
+            buffer[ temp_ptr ] => note_time;
+        }
+        return density;             
+    } 
+}
+
+densityQueue que[g_num_players];
     
 // function for playing notes   
 fun void playSynth(int player, int note, float parm1)    
@@ -97,46 +142,18 @@ fun void playSynth(int player, int note, float parm1)
     env[player].keyOn();
     50::ms => now;
     env[player].keyOff();
+    
+    que[player].addEvent( now );
 }
 
-// duration stuff:
-// fill a circular buffer with note times
-// to calculate density: calculate number of events within a time window,
-// where the window is the lesser of g_window_len or the range or times in the buffer
-class densityQueue
+fun void reportDensities()
 {
-    20 => static int queue_len;
-    time buffer[queue_len];
-    0 => int write_ptr;
-    queue_len - 1 => int read_ptr;
-    
-    10::second => dur time_window;
-    
-    fun void addEvent( time note_time )
-    {
-        note_time => buffer[ write_ptr ];
-        write_ptr--;
-        read_ptr--;
-        if (write_ptr < 0)
-            queue_len - 1 => write_ptr;
-        if (read_ptr < 0)
-            queue_len - 1 => read_ptr;
+    while( 1 ) {
+        que[0].calcDensity( now ) => float dens1;
+        que[1].calcDensity( now ) => float dens2;
+        <<< " Densities: ", dens1, dens2 >>>;
+        0.5::second => now;
     }
-    
-    fun float calcDensity( time current_time )
-    {
-        current_time - time_window => time early_time;
-        read_ptr => int temp_ptr;
-        1 => int num_read;
-        0 => int num_notes;
-        buffer[ temp_ptr ] => time note_time;
-//        while( (note_time > early_time) && (note_count < queue_len ) ) {
-//            
-//         }
-            
-             
-    }
-    
 }
 
 // stuff for the sequencer -------------------------------------------------------
@@ -267,6 +284,7 @@ spork ~ seqHandler3( tick_e );
 spork ~ seqHandler4( tick_e );
 spork ~ keyboardListener();
 spork ~ sendTimeProgress( tick_e );
+spork ~ reportDensities();  
 
 //spork ~ midiCtl();
 
@@ -294,7 +312,7 @@ fun void eventListener(int player)
             
             if( g_print_osc_debug )
             {
-                <<< " in event from player: ", pl, x_in, y_synth_in, note >>>;
+                //<<< " in event from player: ", pl, x_in, y_synth_in, note >>>;
             }
             // play note
             spork ~playSynth(pl, note, x_in);
