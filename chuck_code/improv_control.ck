@@ -58,10 +58,11 @@ env[0] => Gain wet_gain;
 env[1] => wet_gain;
 wet_gain => rvrb => dac;
 0.15 => wet_gain.gain;
-
+ 
 for (0 => int i; i < g_num_players; i++) {
     env[i].keyOff();
     env[i].set(5::ms, 30::ms, 0.3, 300::ms);
+    0.3  => env[i].gain;
     2.0 => lp_flt[i].Q;
     1.5 => hp_flt[i].Q;
 }
@@ -115,15 +116,20 @@ class densityQueue
 
 densityQueue que[g_num_players];
     
-// function for playing notes   
+// stuff for playing notes
+[0,0] @=> int g_synth_latch[];
+
+// sets parameters for next note  
 fun void playSynth(int player, int note, float parm1)    
 {   
+    //<<< "note from player ", player >>>;   // DEBUG
+    
     if (player == 0) 
         Std.mtof(note) => osc1.freq;
     else
         Std.mtof(note) => osc2.freq;
     
-    // cacl filter params
+    // calc filter params
     0.3 => float thr1;
     0.6 => float thr2;
     Std.mtof(note)*1.5 => float lo_base;
@@ -141,14 +147,40 @@ fun void playSynth(int player, int note, float parm1)
         lo_base + 10000.0 => lp_flt[player].freq; 
     }
     
-    //<<< "filts ", hp_flt[player].freq(), lp_flt[player].freq() >>>;  // DEBUG
-    
+    1 => g_synth_latch[player];    
+}
+
+// actually start a note
+fun void triggerSynth( int player )
+{
     env[player].keyOn();
+    que[player].addEvent( now );
     50::ms => now;
     env[player].keyOff();
-    
-    que[player].addEvent( now );
+}    
+
+// event for ticks
+class tickEvent extends Event
+{
+    int tick_num;
 }
+
+    
+// wait 'til a tick.  if a note is scheduled, trigger it.
+fun void synthTimer( tickEvent event )
+{
+    while( 1 ) {
+        event => now;
+        for (0 => int i; i < g_num_players; i++) 
+        {
+            if (g_synth_latch[i] ) {
+                spork ~ triggerSynth(i);
+                0 => g_synth_latch[i];
+            }
+        }
+    }
+}
+
 
 fun void reportDensities()
 {
@@ -206,12 +238,6 @@ fun void sendBoundsToProcc(int player)
     g_prg_upper_d[player][g_current_prg] => osc_proc_out.addFloat;
 }
   
-
-// event for ticks
-class tickEvent extends Event
-{
-    int tick_num;
-}
 tickEvent tick_e;
 
 // audio processing
@@ -234,34 +260,59 @@ cr_buf.samples() => cr_buf.pos;
 
 // process to play sequencer 
 0 => int g_seq_on;
-fun void playSequence()
+0 => int g_tick_ct;
+
+Shred shred0;
+Shred shred1;
+Shred shred2;
+Shred shred3;
+
+fun void startStopSequencer()
 {
-    1 => g_seq_on;     // start the sequencer
-    0 => int tick_ct;
-    0 => g_current_prg;
-    sendBoundsToProcc(0);
-    sendBoundsToProcc(1);
-    <<< "program ", g_current_prg >>>;
-    while( g_seq_on ) {
+    if ( g_seq_on ) {
+        0 => g_seq_on;
+        <<< "stopping sequencer ", "" >>>;
+    }
+    else {
+        1 => g_seq_on;     // start the sequencer
+        0 => g_tick_ct;
+        0 => g_current_prg;
+        <<< "starting sequencer", "">>>;
+        sendBoundsToProcc(0);
+        sendBoundsToProcc(1);
+    }
+}
+
+fun void tickClock()
+{
+    while( 1 ) {
         tick_t => now;
-        tick_ct => tick_e.tick_num;
+        g_tick_ct => tick_e.tick_num;
         tick_e.broadcast();
-        tick_ct++;
-        if (tick_ct == g_pattern_len) {
-            0 => tick_ct;
-            g_current_prg++;
-            if (g_current_prg == g_game_len ) {
-                0 => g_seq_on;
-                <<< "game finished!", "" >>>;
-            }
-            else {
-                sendBoundsToProcc(0);
-                sendBoundsToProcc(1);
-                <<< "program ", g_current_prg >>>;
-            }
+        g_tick_ct++;
+        if (g_tick_ct == g_pattern_len) {
+            0 => g_tick_ct;
+            if( g_seq_on )
+                sendNextProgram();
         }
     }
 }
+
+fun void sendNextProgram()
+{
+    g_current_prg++;
+    if (g_current_prg == g_game_len ) {
+        startStopSequencer();
+        <<< "game finished!", "" >>>;
+    }
+    else {
+        sendBoundsToProcc(0);
+        sendBoundsToProcc(1);
+        <<< "sending program ", g_current_prg >>>;  // DEBUG
+    }
+}
+
+    
 
 // send time progress
 fun void sendTimeProgress( tickEvent event )
@@ -272,7 +323,7 @@ fun void sendTimeProgress( tickEvent event )
             osc_proc_out.startMsg("/time", "f");
             (event.tick_num + 4)$float  / g_pattern_len => float temp; 
             temp => osc_proc_out.addFloat;
-            <<< "time progress", temp >>>;  // DEBUG
+            //<<< "time progress", temp >>>;  // DEBUG
         }
     }
 }
@@ -282,13 +333,16 @@ fun void sendTimeProgress( tickEvent event )
 // spork processes -----------------------------------------------------------------
 spork ~ eventListener(0);
 spork ~ eventListener(1);
+spork ~ tickClock();
+spork ~ synthTimer( tick_e );
+spork ~ keyboardListener();
+spork ~ sendTimeProgress( tick_e );
+spork ~ reportDensities();  
 spork ~ seqHandler1( tick_e );
 spork ~ seqHandler2( tick_e );
 spork ~ seqHandler3( tick_e );
 spork ~ seqHandler4( tick_e );
-spork ~ keyboardListener();
-spork ~ sendTimeProgress( tick_e );
-spork ~ reportDensities();  
+    
 
 //spork ~ midiCtl();
 
@@ -319,7 +373,8 @@ fun void eventListener(int player)
                 //<<< " in event from player: ", pl, x_in, y_synth_in, note >>>;
             }
             // play note
-            spork ~playSynth(pl, note, x_in);
+            //spork ~playSynth(pl, note, x_in);
+            playSynth(pl, note, x_in);
             
             // send message to processing
             sendEventToProcc(pl, x_in, y_procc_in);
@@ -343,10 +398,12 @@ fun void seqHandler1( tickEvent event )
     [1, 0, 2, 0, 1, 0, 2, 1, 1, 0, 2, 0, 1, 2, 2, 3 ] @=> int seq[];
     while( 1 ) {
         event => now;
-        seq[ event.tick_num % seq.cap() ] => int note;
-        if ( note ) {
-            note_gains[ note -1 ] => hh_gain.gain;
-            0 => hh_buf.pos;
+        if (g_seq_on ) {
+            seq[ event.tick_num % seq.cap() ] => int note;
+            if ( note ) {
+                note_gains[ note -1 ] => hh_gain.gain;
+                0 => hh_buf.pos;
+            }
         }
     }
 }
@@ -358,10 +415,12 @@ fun void seqHandler2( tickEvent event )
     [2, 0, 0, 0, 2, 0, 0, 0, 2, 0, 0, 0, 2, 0, 1, 0 ] @=> int seq[];
     while( 1 ) {
         event => now;
-        seq[ event.tick_num % seq.cap() ] => int note;
-        if ( note ) {
-            note_gains[ note -1 ] => kk_gain.gain;
-            0 => kk_buf.pos;
+        if (g_seq_on ) {
+            seq[ event.tick_num % seq.cap() ] => int note;
+            if ( note ) {
+                note_gains[ note -1 ] => kk_gain.gain;
+                0 => kk_buf.pos;
+            }
         }
     }
 }
@@ -374,10 +433,12 @@ fun void seqHandler3( tickEvent event )
      0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 1, 3, 1, 3, 0  ] @=> int seq[];
     while( 1 ) {
         event => now;
-        seq[ event.tick_num % seq.cap() ] => int note;
-        if ( note ) {
-            note_gains[ note-1 ] => sn_gain.gain;
-            0 => sn_buf.pos;
+        if (g_seq_on ) {
+            seq[ event.tick_num % seq.cap() ] => int note;
+            if ( note ) {
+                note_gains[ note-1 ] => sn_gain.gain;
+                0 => sn_buf.pos;
+            }
         }
     }
 }
@@ -389,8 +450,10 @@ fun void seqHandler4( tickEvent event )
     [2, 0, 0, 0, 2, 0, 0, 0, 2, 0, 0, 0, 2, 0, 1, 0 ] @=> int seq[];
     while( 1 ) {
         event => now;
-        if ( event.tick_num == 0) {
-            0 => cr_buf.pos;
+        if (g_seq_on ) {
+            if ( event.tick_num == 0) {
+                0 => cr_buf.pos;
+            }
         }
     }
 }
@@ -418,16 +481,8 @@ fun void keyboardListener()
             {
                 // space key
                 if( msgKbd.which == 44) {
-                    if ( g_seq_on ) {
-                        0 => g_seq_on;      // stop the sequencer
-                        <<< "stopping sequencer ", "" >>>;
-                    }
-                    else {
-                        // call function to send values here
-                        spork ~ playSequence();     
-                        <<< "starting  sequencer ", "" >>>;
-                    }
-                }                  
+                    startStopSequencer();
+                }
                 else {
                     //<<< "unknown key ", msgKbd.which >>>;
                 }

@@ -46,8 +46,10 @@ boolean timeIndicator = false;
 //////////
 
 // Screen size
-int screen_width = 640;
-int screen_height = 880;
+//int screen_width = 640;
+//int screen_height = 880; 
+int screen_width = 512;
+int screen_height = 704;
 
 // Bars width
 int bar_width = 50;
