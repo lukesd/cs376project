@@ -208,6 +208,8 @@ class densityQueue
             //num_notes / ((current_time - note_time)/1::second) => density;
             (current_time - note_time) / tick_t => float norm;
             num_notes / norm => density;
+            if (density > 1.0)
+                1.0 => density;
             temp_ptr++;
             if (temp_ptr >= queue_len)
                 0 => temp_ptr;
@@ -249,6 +251,7 @@ Pan2 panr[g_num_players];
 
 SawOsc osc1 => lp_flt[0] => hp_flt[0] => env[0] => panr[0] => dac;
 PulseOsc osc2 => lp_flt[1] => hp_flt[1] => env[1] => panr[1] => dac;
+0.7  => osc2.gain;
 JCRev rvrb;
 env[0] => Gain wet_gain;
 env[1] => wet_gain;
@@ -342,10 +345,6 @@ fun void reportDensities()
         0.25::second => now;
     }
 }
-
-
-
-
 
 
 // spork processes -----------------------------------------------------------------
@@ -472,9 +471,8 @@ fun void seqHandler4( tickEvent event )
             }
         }
     }
-}
+} 
 
-   
 // keyboard listener 
 fun void keyboardListener()
 {
@@ -495,12 +493,13 @@ fun void keyboardListener()
                 // space key
                 if( msgKbd.which == 44) {
                     startStopSequencer();
-                    <<< "SPACE" >>>;
+                   // <<< "SPACE" >>>;
                 }
                 else {
-                    <<< "unknown key ", msgKbd.which >>>;
+                    //<<< "unknown key ", msgKbd.which >>>;
                 }
             }
         }
     }
 }
+    
