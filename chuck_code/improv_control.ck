@@ -54,10 +54,23 @@ ticks_per_beat * beats_per_bar * bars_per_pattern => int g_pattern_len; // ticks
 [[0.6, 0.4, 1.0, 0.6],[1.0, 0.3, 0.6, 0.5]] @=> float g_prg_upper_t[][];
 [[0.5, 0.3, 0.4, 0.3],[0.3, 0.0, 0.0, 0.0]] @=> float g_prg_lower_d[][];   // density
 [[1.0, 0.5, 0.6, 0.9],[1.0, 1.0, 1.0, 1.0]] @=> float g_prg_upper_d[][];
+[[1, 1, 1, 1],[0, 0, 1, 1]] @=> int g_prg_box_on[][];
 
-4 => int g_game_len;      // number of program changes in a game
+
+4 => int g_game_len;      // number of program steps in a game
 0 => int g_current_prg;   // current location in game
 
+fun void sendGameParams()
+{
+        <<< "sending program ", g_current_prg >>>;  // DEBUG
+        sendBoundsToProcc(0);
+        sendBoundsToProcc(1);
+        
+        // send program counts left
+        osc_proc_out.startMsg("/remaining", "i");
+        g_game_len - g_current_prg => osc_proc_out.addInt;
+}
+    
 // send bounds to Processing
 fun void sendBoundsToProcc(int player)
 {
@@ -74,11 +87,16 @@ fun void sendBoundsToProcc(int player)
     player => osc_proc_out.addInt;
     g_prg_lower_d[player][g_current_prg] => osc_proc_out.addFloat;
     g_prg_upper_d[player][g_current_prg] => osc_proc_out.addFloat;
+    
+    // send square on/off
+    osc_proc_out.startMsg("/rect_on", "i i");
+    player => osc_proc_out.addInt;
+    g_prg_box_on[player][g_current_prg] => osc_proc_out.addInt;
 }
 
 tickEvent tick_e;
 
-// audio processing
+// audio processing for drums
 SndBuf hh_buf => Gain hh_gain => dac; // hi hat
 SndBuf kk_buf => Gain kk_gain => dac; // kick
 SndBuf sn_buf => Gain sn_gain => dac; // snare
@@ -95,6 +113,15 @@ sn_buf.samples() => sn_buf.pos;
 cr_buf.samples() => cr_buf.pos;
 
 [Std.dbtorms(100-12), Std.dbtorms(100-9), Std.dbtorms(100-6)] @=> float note_gains[];
+
+// audio for accompaniment
+5 => int g_num_chords;
+SndBuf chords[g_num_chords];
+"Gm.wav" => chords[0].read;
+"Cm7.wav" => chords[1].read;
+"Eb.wav" => chords[2].read;
+"Dm7.wav" => chords[3].read;
+"Gm-2.wav" => chords[4].read;
 
 // process to play sequencer 
 0 => int g_seq_on;
@@ -116,8 +143,7 @@ fun void startStopSequencer()
         0 => g_tick_ct;
         0 => g_current_prg;
         <<< "starting sequencer", "">>>;
-        sendBoundsToProcc(0);
-        sendBoundsToProcc(1);
+        sendGameParams();
     }
 }
 
@@ -144,13 +170,9 @@ fun void sendNextProgram()
         <<< "game finished!", "" >>>;
     }
     else {
-        sendBoundsToProcc(0);
-        sendBoundsToProcc(1);
-        <<< "sending program ", g_current_prg >>>;  // DEBUG
+        sendGameParams();
     }
 }
-
-
 
 // send time progress
 fun void sendTimeProgress( tickEvent event )
@@ -241,7 +263,7 @@ fun int calcNote(float x)
     return note;
 }
 
-// stuff for synthesizing sound
+// stuff for synthesizing instrument sound
 LPF lp_flt[g_num_players];
 HPF hp_flt[g_num_players];
 ADSR env[g_num_players];
@@ -331,7 +353,7 @@ fun void reportDensities()
     while( 1 ) {
         que[0].calcDensity( now ) => float dens1;
         que[1].calcDensity( now ) => float dens2;
-        <<< " Densities: ", dens1, dens2 >>>;
+        //<<< " Densities: ", dens1, dens2 >>>;    // DEBUG
         
         // send messages to processing
         osc_proc_out.startMsg("/dens", "i f ");
