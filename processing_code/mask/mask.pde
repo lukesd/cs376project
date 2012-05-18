@@ -46,10 +46,8 @@ boolean timeIndicator = false;
 //////////
 
 // Screen size
-//int screen_width = 640;
-//int screen_height = 880; 
-int screen_width = 512;
-int screen_height = 704;
+int screen_width = 30;
+int screen_height = 30;
 
 // Bars width
 int bar_width = 50;
@@ -66,64 +64,49 @@ int x_density2_origin = 3*padding + bar_width + screen_width;
 int y_density2_origin = 2*padding + bar_width + screen_height;
 
 // Canvas Size
-int width = screen_width + 4*padding + 2*bar_width;
-int height = screen_height + 3*padding + bar_width;
+//int width = screen_width + 4*padding + 2*bar_width;
+//int height = screen_height + 3*padding + bar_width;
+int width = 30;
+int height = 30;
 
 
-// Canevas functions
-//////////////////////
 
-void drawScreen() {
-  rect(x_screen_origin, y_screen_origin - screen_height , screen_width, screen_height);
+
+
+
+
+
+
+
+
+
+
+
+
+// Mask array
+public int[] maskArray = new int[screen_width * screen_height];
+
+void createRectangleInScreen(int[] a, int x1, int x2, int y1, int y2) {
+  for (int i = y1; i < y2; i++) {
+    for (int j = x1; j < x2; j++) {
+      a[screen_height * i + j ] = 0;
+    }
+  }
 }
 
-void drawLeftBar() {
-  rect(padding, 2*padding + bar_width, bar_width, screen_height);
+void fillWithN(int[] a, int n) {
+  for (int i = 0; i < a.length; i++) {
+    a[i] = n;
+  }
 }
 
-void drawRightBar() {
-  rect(3*padding + bar_width + screen_width, 2*padding + bar_width, bar_width, screen_height);
+void createMaskArray(int[] a, int[] rect1, int[] rect2) {
+  fillWithN(a, 255);
+  createRectangleInScreen(a, rect1[0], rect1[1], rect1[2], rect1[3]);
+  createRectangleInScreen(a, rect2[0], rect2[1], rect2[2], rect2[3]);
 }
 
-void drawTopBar() {
-  rect(2*padding + bar_width, padding, screen_width, bar_width);
-}
 
-void drawCanevas() {
-  noFill();
-  stroke(255);
-  drawScreen();
-  drawLeftBar();
-  drawRightBar();
-  drawTopBar();
-}
-
-// Dynamic objects functions
-//////////////////////////////
-
-void drawPlayer1() {
-  noFill();
-  stroke(255, 0, 0);
-  ellipse(x_screen_origin + player1Position[0], y_screen_origin - screen_height + player1Position[1], 80, 80);
-}
-
-void drawActivePlayer1() {
-  stroke(255, 0, 0);
-  fill(255, 0, 0);
-  ellipse(x_screen_origin + player1Position[0], y_screen_origin - screen_height + player1Position[1], 80, 80);
-}
-
-void drawPlayer2() {
-  noFill();
-  stroke(0, 255, 0);
-  ellipse(x_screen_origin + player2Position[0], y_screen_origin - screen_height  + player2Position[1], 80, 80);
-}
-
-void drawActivePlayer2() {
-  stroke(0, 255, 0);
-  fill(0, 255, 0);
-  ellipse(x_screen_origin + player2Position[0], y_screen_origin - screen_height  + player2Position[1], 80, 80);
-}
 
 void drawPlayer1Rectangle() {
   noFill();
@@ -209,6 +192,15 @@ void setup(){
   size(width, height);
   frameRate(25);
   background(0);
+  
+  PImage img = loadImage("images.jpg");
+  PImage maskImg = loadImage("mask1.jpg");
+  int[] rect1 = {1, 15, 1, 5};
+  int[] rect2 = {20, 28, 1, 15};
+  createMaskArray(maskArray, rect1, rect2);
+  println(maskArray);
+  img.mask(maskArray);
+image(img, 0, 0);
 
   // init drawing
   smooth();
@@ -217,6 +209,73 @@ void setup(){
   // create a new instance of oscP5. 
   // 8012 is the port number we are listening for incoming osc messages.
   oscP5 = new OscP5(this, 8012);
+
+
+
+/*  size(600,600,JAVA2D);
+
+background(#CC9966);
+
+fill(255);
+
+stroke(0);
+
+// "o" is compound because it has a hole
+
+beginShape();
+
+// outer portion
+
+vertex(100,200);
+
+vertex(250,200);
+
+vertex(250,400);
+
+vertex(100,400);
+
+vertex(100,200); // must close manually (if you want the stroke)
+
+// the hole
+
+breakShape();
+
+vertex(80,250);
+
+vertex(150,370);
+
+vertex(200,350);
+
+vertex(200,250);
+
+endShape(CLOSE); // ok to let p5 close it
+
+// "i" is compound because it is disjoint
+
+beginShape();
+
+// base portion
+
+vertex(300,200);
+
+vertex(400,200);
+
+vertex(400,400);
+
+vertex(300,400);
+
+vertex(300,200); // must close manually (if you want the stroke)
+
+// the dot
+
+breakShape();
+
+endShape(CLOSE); // ok to let p5 close it
+
+// now try making a capital greek theta
+
+// (hint: it'll require 2 breakShapes()'s) */
+
 }
 
 
@@ -234,70 +293,11 @@ void resetTriggers() {
 
 void draw() {
   
-  background(0);
-  drawCanevas();
+  //background(0);
+  //drawCanevas();
   
+//image(img, 25, 0);
   
-  
-  
-  
-  
-  
-  
-  
-  // Player1
-  if (player1Playing) {
-    drawActivePlayer1();
-  }
-  else {
-    drawPlayer1();
-  }
-  
-  // Player2
-  if (player2Playing) {
-    drawActivePlayer2();
-  }
-  else {
-    drawPlayer2();
-  }
-  
-  // Player1 Rectangle
-  if (player1RectangleIndicator) {
-    drawPlayer1Rectangle();
-  }
-  
-  // Player2 Rectangle
-  if (player2RectangleIndicator) {
-    drawPlayer2Rectangle();
-  }
-  
-  // Player1 Density
-  if (player1DensityIndicator) {
-    drawPlayer1Density();
-  }
-  
-  // Player2 Density
-  if (player2DensityIndicator) {
-    drawPlayer2Density();
-  }
-  
-  // Player1 Density Boundaries
-  if (player1DensityBoundariesIndicator) {
-    drawPlayer1DensityBoundaries();
-  }
-  
-  // Player2 Density Boundaries
-  if (player2DensityBoundariesIndicator) {
-    drawPlayer2DensityBoundaries();
-  }
-  
-  // Time
-  if (timeIndicator) {
-    drawTime();
-  }
-  
-  
-  resetTriggers();
 }
 
 
@@ -448,3 +448,43 @@ void getTime(OscMessage theOscMessage) {
   
   println("### ### Time: " + t);
 }
+
+
+
+
+
+
+
+
+
+
+
+
+/*
+int intVar = 0;
+String stringVar = "a string";
+int[] arrayVar = {1,2,3,4};
+
+void setup() {
+  changeInt(intVar);
+  println(intVar);
+  changeString(stringVar);
+  println(stringVar);
+  changeArray(arrayVar);
+  println(arrayVar);
+}
+
+void changeInt(int intIn) {
+  intIn = 1;
+}
+
+void changeString(String stringIn) {
+  stringIn = "nothing...";
+}
+
+void changeArray(int[] arrayIn) {
+  for (int i = 0; i < 2; i++) {
+  arrayIn[i] = 10;
+  }
+}*/
+
