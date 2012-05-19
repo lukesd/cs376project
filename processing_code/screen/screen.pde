@@ -1,8 +1,9 @@
-
+      
 
 import oscP5.*;
 import netP5.*;
-
+import geomerative.*;
+import processing.opengl.*;
 
 
 
@@ -36,6 +37,16 @@ boolean player2DensityBoundariesIndicator = false;
 int time = 0;
 boolean timeIndicator = false;
 
+int remainingPatterns = 8;
+boolean remainingPatternsIndicator = true;
+
+// Mask
+RPolygon rectanglesMask;
+RPolygon rectanglesMaskBorder;
+RPolygon density1Mask;
+RPolygon density1MaskBorder;
+RPolygon density2Mask;
+RPolygon density2MaskBorder;
 
 
 /*
@@ -89,6 +100,13 @@ void drawTopBar() {
   rect(2*padding + bar_width, padding, screen_width, bar_width);
 }
 
+void displayTimeText() {
+  fill(255);
+  textAlign(CENTER);
+  textSize(padding);
+  text("Time", 2*padding + bar_width + 0.5*screen_width, padding*0.9);
+}
+
 void drawCanevas() {
   noFill();
   stroke(255);
@@ -96,6 +114,7 @@ void drawCanevas() {
   drawLeftBar();
   drawRightBar();
   drawTopBar();
+  displayTimeText();
 }
 
 // Dynamic objects functions
@@ -125,6 +144,7 @@ void drawActivePlayer2() {
   ellipse(x_screen_origin + player2Position[0], y_screen_origin - screen_height  + player2Position[1], 80, 80);
 }
 
+/*
 void drawPlayer1Rectangle() {
   noFill();
   stroke(0, 0, 255);
@@ -146,23 +166,26 @@ void drawPlayer2Rectangle() {
     player2Rectangle[3] - player2Rectangle[2]
   );
 }
+*/
 
 void drawPlayer1Density() {
   fill(255, 0, 0);
+  stroke(255, 0, 0);
   rect(
     padding,
-    2*padding + bar_width,
+    y_density1_origin - player1Density,
     bar_width,
-    screen_height*player1Density);
+    player1Density);
 }
 
 void drawPlayer2Density() {
   fill(0, 255, 0);
+  stroke(0, 255, 0);
   rect( 
-    3*padding + bar_width + screen_width,
-    2*padding + bar_width,
+    x_density2_origin,
+    y_density2_origin - player2Density,
     bar_width,
-    screen_height*player2Density);
+    player2Density);
 }
 
 void drawPlayer1DensityBoundaries() {
@@ -191,6 +214,103 @@ void drawTime() {
   fill(255);
   rect(2*padding + bar_width, padding, time, bar_width);
 }
+
+void displayRemainingPatterns() {
+  fill(255);
+  textAlign(CENTER);
+  textSize(bar_width);
+  text(str(remainingPatterns), 3*padding + screen_width + bar_width*1.5, padding + bar_width*0.9);
+}
+
+void generateRectanglesMask() {
+  // Generate the canevas
+  RPolygon s = RPolygon.createRectangle(
+    x_screen_origin,
+    y_screen_origin - screen_height,
+    screen_width,
+    screen_height
+  );
+  
+  // Generate Rectangle 1
+  RPolygon r1 = RPolygon.createRectangle(
+    x_screen_origin + player1Rectangle[0],
+    y_screen_origin - player1Rectangle[3],
+    player1Rectangle[1] - player1Rectangle[0],
+    player1Rectangle[3] - player1Rectangle[2]
+  );
+  
+  // Generate Rectangle 2
+  RPolygon r2 = RPolygon.createRectangle(
+    x_screen_origin + player2Rectangle[0],
+    y_screen_origin - player2Rectangle[3],
+    player2Rectangle[1] - player2Rectangle[0],
+    player2Rectangle[3] - player2Rectangle[2]
+  );
+  
+  // Compute the mask
+  rectanglesMask = new RPolygon();
+  rectanglesMask = rectanglesMask.union(s);
+  rectanglesMask = rectanglesMask.diff(r1);
+  rectanglesMask = rectanglesMask.diff(r2);
+  
+  rectanglesMaskBorder = new RPolygon();
+  rectanglesMaskBorder = rectanglesMaskBorder.union(r1);
+  rectanglesMaskBorder = rectanglesMaskBorder.union(r2);
+}
+
+void generateDensity1Mask() {
+  // Generate the canevas
+  RPolygon s = RPolygon.createRectangle(
+    padding,
+    2*padding + bar_width,
+    bar_width,
+    screen_height
+  );
+  
+  // Generate Rectangle
+  RPolygon r = RPolygon.createRectangle(
+    padding,
+    y_density1_origin - player1DensityBoundaries[1],
+    bar_width,
+    player1DensityBoundaries[1] - player1DensityBoundaries[0]
+  );
+  
+  // Compute the mask
+  density1Mask = new RPolygon();
+  density1Mask = density1Mask.union(s);
+  density1Mask = density1Mask.diff(r);
+  
+  density1MaskBorder = new RPolygon();
+  density1MaskBorder = density1MaskBorder.union(r);
+}
+
+void generateDensity2Mask() {
+  // Generate the canevas
+  RPolygon s = RPolygon.createRectangle(
+    3*padding + bar_width + screen_width,
+    2*padding + bar_width,
+    bar_width,
+    screen_height
+  );
+  
+  // Generate Rectangle
+  RPolygon r = RPolygon.createRectangle(
+    x_density2_origin,
+    y_density2_origin - player2DensityBoundaries[1],
+    bar_width,
+    player2DensityBoundaries[1] - player2DensityBoundaries[0]
+  );
+  
+  // Compute the mask
+  density2Mask = new RPolygon();
+  density2Mask = density2Mask.union(s);
+  density2Mask = density2Mask.diff(r);
+  
+  density2MaskBorder = new RPolygon();
+  density2MaskBorder = density2MaskBorder.union(r);
+}
+
+
 
 
 
@@ -225,24 +345,19 @@ void resetTriggers() {
   player2Playing = false;
   //player1RectangleIndicator = false;
   //player2RectangleIndicator = false;
-  player1DensityIndicator = false;
-  player2DensityIndicator = false;
+  //player1DensityIndicator = false;
+  //player2DensityIndicator = false;
   //player1DensityBoundariesIndicator = false;
   //player2DensityBoundariesIndicator = false;  
   //timeIndicator = false;
 }
 
+
+
 void draw() {
   
   background(0);
   drawCanevas();
-  
-  
-  
-  
-  
-  
-  
   
   
   // Player1
@@ -263,12 +378,12 @@ void draw() {
   
   // Player1 Rectangle
   if (player1RectangleIndicator) {
-    drawPlayer1Rectangle();
+    //drawPlayer1Rectangle();
   }
   
   // Player2 Rectangle
   if (player2RectangleIndicator) {
-    drawPlayer2Rectangle();
+    //drawPlayer2Rectangle();
   }
   
   // Player1 Density
@@ -283,12 +398,38 @@ void draw() {
   
   // Player1 Density Boundaries
   if (player1DensityBoundariesIndicator) {
-    drawPlayer1DensityBoundaries();
+    //drawPlayer1DensityBoundaries();
+        
+    // Generate the mask
+    generateDensity1Mask();
+    
+    // Draw the grey mask
+    fill(50, 50, 50, 230);
+    stroke(255);
+    density1Mask.draw(g);
+    
+    // Draw the mask inner border
+    noFill();
+    stroke(0, 0, 255);
+    density1MaskBorder.draw(g);
   }
   
   // Player2 Density Boundaries
   if (player2DensityBoundariesIndicator) {
-    drawPlayer2DensityBoundaries();
+    //drawPlayer2DensityBoundaries();
+    
+    // Generate the mask
+    generateDensity2Mask();
+    
+    // Draw the grey mask
+    fill(50,50,50,230);
+    stroke(255);
+    density2Mask.draw(g);
+    
+    // Draw the mask inner border
+    noFill();
+    stroke(0, 0, 255);
+    density2MaskBorder.draw(g);
   }
   
   // Time
@@ -296,6 +437,24 @@ void draw() {
     drawTime();
   }
   
+  if (remainingPatternsIndicator) {
+    displayRemainingPatterns();
+  }
+   
+  if (player2RectangleIndicator) {
+    // Generate the mask
+    generateRectanglesMask();
+    
+    // Draw the grey mask
+    fill(50,50,50,230);
+    stroke(255);
+    rectanglesMask.draw(g);
+    
+    // Draw the mask inner border
+    noFill();
+    stroke(0, 0, 255);
+    rectanglesMaskBorder.draw(g);
+  }
   
   resetTriggers();
 }
@@ -343,6 +502,15 @@ void oscEvent(OscMessage theOscMessage) {
   // check if theOscMessage has the address pattern /dens. 
   if(theOscMessage.checkAddrPattern("/time") && theOscMessage.checkTypetag("f")) {
     getTime(theOscMessage);
+    println("### received an osc message with address pattern "
+      + theOscMessage.addrPattern()
+      + " and typetag "
+      + theOscMessage.typetag());
+  }
+  
+  // check if theOscMessage has the address pattern /remaining. 
+  if(theOscMessage.checkAddrPattern("/remaining") && theOscMessage.checkTypetag("i")) {
+    getRemainingPatterns(theOscMessage);
     println("### received an osc message with address pattern "
       + theOscMessage.addrPattern()
       + " and typetag "
@@ -447,4 +615,14 @@ void getTime(OscMessage theOscMessage) {
   timeIndicator = true;
   
   println("### ### Time: " + t);
+}
+
+void getRemainingPatterns(OscMessage theOscMessage) {
+  // parse theOscMessage and extract the values from the osc message arguments.
+  int n = theOscMessage.get(0).intValue();
+  
+  remainingPatterns = n;
+  remainingPatternsIndicator = true;
+  
+  println("### ### Remaining patterns: " + remainingPatterns);
 }
