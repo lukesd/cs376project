@@ -48,16 +48,17 @@ ticks_per_beat * beats_per_bar * bars_per_pattern => int g_pattern_len; // ticks
 [1.0, 1.0] @=> float g_upper_d[];
 
 // the program
-[[0.0, 0.3, 0.0, 0.0],[0.5, 0.3, 0.2, 0.6]] @=> float g_prg_lower_p[][];   // pitch
-[[0.5, 0.4, 1.0, 1.0],[1.0, 0.7, 0.7, 0.8]] @=> float g_prg_upper_p[][];
-[[0.1, 0.3, 0.6, 0.4],[0.5, 0.2, 0.3, 0.0]] @=> float g_prg_lower_t[][];   // timbre
-[[0.6, 0.4, 1.0, 0.6],[1.0, 0.3, 0.6, 0.5]] @=> float g_prg_upper_t[][];
-[[0.5, 0.3, 0.4, 0.3],[0.3, 0.0, 0.0, 0.0]] @=> float g_prg_lower_d[][];   // density
-[[1.0, 0.5, 0.6, 0.9],[1.0, 1.0, 1.0, 1.0]] @=> float g_prg_upper_d[][];
-[[1, 1, 1, 1],[0, 0, 1, 1]] @=> int g_prg_box_on[][];
+// 1     2    3    4   5    6     7   8     1     2    3    4   5    6     7   8
+[[0.0, 0.5, 0.5, 0.0, 0.0, 0.1, 0.0, 0.1],[0.0, 0.0, 0.0, 0.0, 0.5, 0.6, 0.0, 0.6]] @=> float g_prg_lower_p[][];   // pitch
+[[0.5, 1.0, 1.0, 0.3, 0.4, 0.3, 1.0, 0.3],[0.0, 0.0, 0.0, 0.0, 1.0, 0.8, 1.0, 1.0]] @=> float g_prg_upper_p[][];
+[[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.2, 0.0],[0.0, 0.0, 0.0, 0.0, 0.5, 0.0, 0.6, 0.6]] @=> float g_prg_lower_t[][];
+[[0.5, 0.5, 1.0, 1.0, 0.4, 1.0, 0.4, 1.0],[0.0, 0.0, 0.0, 0.0, 1.0, 1.0, 0.8, 1.0]] @=> float g_prg_upper_t[][];
+[[0.2, 0.2, 0.5, 0.0, 0.5, 0.3, 0.0, 0.0],[0.2, 0.2, 0.5, 0.5, 0.0, 0.3, 0.0, 0.0]] @=> float g_prg_lower_d[][];   // density
+[[0.8, 0.8, 1.0, 0.5, 1.0, 1.0, 0.6, 1.0],[0.8, 0.8, 1.0, 1.0, 0.5, 1.0, 0.6, 1.0]] @=> float g_prg_upper_d[][];
+[[1, 1, 1, 1, 1, 1, 1, 1],[0, 0, 0, 0, 1, 1, 1, 1]] @=> int g_prg_box_on[][];
 
 
-4 => int g_game_len;      // number of program steps in a game
+8 => int g_game_len;      // number of program steps in a game
 0 => int g_current_prg;   // current location in game
 
 fun void sendGameParams()
