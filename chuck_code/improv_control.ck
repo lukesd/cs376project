@@ -89,7 +89,7 @@ fun void sendBoundsToProcc(int player)
     g_prg_upper_d[player][g_current_prg] => osc_proc_out.addFloat;
     
     // send square on/off
-    osc_proc_out.startMsg("/rect_on", "i i");
+     osc_proc_out.startMsg("/rect_on", "i i");
     player => osc_proc_out.addInt;
     g_prg_box_on[player][g_current_prg] => osc_proc_out.addInt;
 }
@@ -194,7 +194,7 @@ fun void sendTimeProgress( tickEvent event )
 // where the window is the lesser of g_window_len or the range or times in the buffer
 class densityQueue
 {
-    20 => static int queue_len;
+    15 => static int queue_len;
     time buffer[queue_len];
     0 => int write_ptr;
     queue_len - 1 => int read_ptr;
@@ -215,7 +215,6 @@ class densityQueue
     
     fun float calcDensity( time current_time )
     {
-        //<<< "DEBUG", "calcDensity" >>>;
         current_time - time_window => time early_time;
         write_ptr+1 => int temp_ptr;
         if (temp_ptr >= queue_len)
@@ -223,21 +222,20 @@ class densityQueue
         buffer[ temp_ptr ] => time note_time;
         0 => int num_notes;
         0.0 => float density;
-        //<<< "note time ", note_time, "early_time ", early_time >>>;
-        //<<< "num note early", num_notes, note_time, early_time >>>;
-        while( (note_time > early_time) && (num_notes < queue_len ) ) {
+        
+        while( (note_time > early_time) && (num_notes < queue_len-1 ) ) {
+        //while( (num_notes < queue_len-1 ) ) {
             num_notes++;
-            //num_notes / ((current_time - note_time)/1::second) => density;
-            (current_time - note_time) / tick_t => float norm;
-            num_notes / norm => density;
-            if (density > 1.0)
-                1.0 => density;
             temp_ptr++;
             if (temp_ptr >= queue_len)
                 0 => temp_ptr;
             buffer[ temp_ptr ] => note_time;
             //<<< "num note early", num_notes, note_time, early_time >>>;
         } 
+        (current_time - note_time) / tick_t => float norm;
+        num_notes / norm => density;
+        if (density > 1.0)
+            1.0 => density;
         return density;             
     } 
 }
@@ -353,7 +351,7 @@ fun void reportDensities()
     while( 1 ) {
         que[0].calcDensity( now ) => float dens1;
         que[1].calcDensity( now ) => float dens2;
-        //<<< " Densities: ", dens1, dens2 >>>;    // DEBUG
+        <<< " Densities: ", dens1, dens2 >>>;    // DEBUG
         
         // send messages to processing
         osc_proc_out.startMsg("/dens", "i f ");
