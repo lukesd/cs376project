@@ -61,6 +61,9 @@ ticks_per_beat * beats_per_bar * bars_per_pattern => int g_pattern_len; // ticks
 8 => int g_game_len;      // number of program steps in a game
 0 => int g_current_prg;   // current location in game
 
+[[0.0, 1.0, 0.0, 1.0],[0.0, 1.0, 0.0, 1.0]] @=> float g_param_squares[][];  // boundaries for good notes [low pitch, high pitch, low timbre, high timbre]
+[0, 0] @=> int g_square_on[];
+
 fun void sendGameParams()
 {
         <<< "sending program ", g_current_prg >>>;  // DEBUG
@@ -75,6 +78,13 @@ fun void sendGameParams()
 // send bounds to Processing
 fun void sendBoundsToProcc(int player)
 {
+    // set square for synthesis
+    g_prg_lower_p[player][g_current_prg] => g_param_squares[player][0];
+    g_prg_upper_p[player][g_current_prg] => g_param_squares[player][1];
+    g_prg_lower_t[player][g_current_prg] => g_param_squares[player][2];
+    g_prg_upper_t[player][g_current_prg] => g_param_squares[player][3];
+    g_prg_box_on[player][g_current_prg] => g_square_on[player];
+    
     // send pitch and timbre
     osc_proc_out.startMsg("/rect", "i f f f f");
     player => osc_proc_out.addInt;
@@ -180,7 +190,7 @@ fun void sendTimeProgress( tickEvent event )
 {
     while( 1 ) {
         event => now;
-        if ( (event.tick_num % 4) == 0 ) {
+        if ( g_seq_on && ((event.tick_num % 4) == 0) ) {
             osc_proc_out.startMsg("/time", "f");
             (event.tick_num + 4)$float  / g_pattern_len => float temp; 
             temp => osc_proc_out.addFloat;
@@ -267,35 +277,48 @@ LPF lp_flt[g_num_players];
 HPF hp_flt[g_num_players];
 ADSR env[g_num_players];
 Pan2 panr[g_num_players];
-0.8 => panr[0].pan;
--0.8 => panr[1].pan;
+Gain ring[g_num_players];
+Noise noiz[g_num_players];
+Step step[g_num_players];
+Gain noiz_mix[g_num_players];
 
-SawOsc osc1 => lp_flt[0] => hp_flt[0] => env[0] => panr[0] => dac;
-PulseOsc osc2 => lp_flt[1] => hp_flt[1] => env[1] => panr[1] => dac;
-0.7  => osc2.gain;
+SawOsc osc1 => lp_flt[0] => hp_flt[0] => ring[0] => env[0] =>  panr[0] => dac;
+PulseOsc osc2 => lp_flt[1] => hp_flt[1] => ring[1] => env[1] => panr[1] => dac;
+noiz[0] => noiz_mix[0] => ring[0];
+noiz[1] => noiz_mix[1] => ring[1];
+step[0] => noiz_mix[0];
+step[1] => noiz_mix[1];
+
 JCRev rvrb;
 env[0] => Gain wet_gain;
 env[1] => wet_gain;
 wet_gain => rvrb => dac;
+// set params: 
 0.15 => wet_gain.gain;
- 
+0.8 => panr[0].pan;
+-0.8 => panr[1].pan;
+0.7  => osc2.gain;
 for (0 => int i; i < g_num_players; i++) {
+    3 => ring[i].op;
     env[i].keyOff();
     env[i].set(5::ms, 30::ms, 0.3, 300::ms);
     0.3  => env[i].gain;
     2.0 => lp_flt[i].Q;
     1.5 => hp_flt[i].Q;
+    0.0 => noiz[i].gain;
+    1.0 => step[i].next;
 }
 
     
 // stuff for playing notes
 [0,0] @=> int g_synth_latch[];
 
-// sets parameters for next note  
-fun void playSynth(int player, int note, float parm1)    
+// sets parameters for next note
+fun void playSynth(int player, float parmX, float parmY)    
 {   
     //<<< "note from player ", player >>>;   // DEBUG
-    
+    calcNote(parmY) => int note;
+
     if (player == 0) 
         Std.mtof(note) => osc1.freq;
     else
@@ -306,17 +329,80 @@ fun void playSynth(int player, int note, float parm1)
     0.6 => float thr2;
     Std.mtof(note)*1.5 => float lo_base;
     Std.mtof(note)*0.2 => float hi_base;
-    if (parm1 < thr1 ) {
+    if (parmX < thr1 ) {
         hi_base => hp_flt[player].freq;
-        lo_base + 10000.0*parm1/thr2 => lp_flt[player].freq; 
+        lo_base + 10000.0*parmX/thr2 => lp_flt[player].freq; 
     }
-    else if (parm1 < thr2) {
-        hi_base + 3000.0*(parm1-thr1)/(1.0 - thr1) => hp_flt[player].freq;
-        lo_base + 10000.0*parm1/thr2 => lp_flt[player].freq; 
+    else if (parmX < thr2) {
+        hi_base + 3000.0*(parmX-thr1)/(1.0 - thr1) => hp_flt[player].freq;
+        lo_base + 10000.0*parmX/thr2 => lp_flt[player].freq; 
     }
     else {
-        hi_base + 3000.0*(parm1-thr1)/(1.0 - thr1) => hp_flt[player].freq;
+        hi_base + 3000.0*(parmX-thr1)/(1.0 - thr1) => hp_flt[player].freq;
         lo_base + 10000.0 => lp_flt[player].freq; 
+    }
+    
+    // calc noise amount depending on whether inside or outide squares
+    // are we outside square 1?
+    
+    // are we outside square 2? By how much?
+    [0, 0] @=> int outside[];
+    [100.0, 100.0] @=> float dist[];
+    for (0 => int sqr; sqr < 2; sqr++) {
+        if ( g_square_on[sqr] && (parmX < g_param_squares[sqr][2])) {
+            1 => outside[sqr];
+            g_param_squares[sqr][2] - parmX => dist[sqr];
+            //<<< "outside", sqr, " A" >>>; // DEBUG
+        }
+        if ( g_square_on[sqr] && (parmX > g_param_squares[sqr][3])) {
+            1 => outside[sqr];
+            parmX - g_param_squares[sqr][3] => float temp_dist;
+            if (temp_dist < dist[sqr])
+                temp_dist => dist[sqr];
+           //<<< "outside", sqr, " B" >>>; // DEBUG
+ 
+        }
+        if ( g_square_on[sqr] && (parmY < g_param_squares[sqr][0])) {
+            1 => outside[sqr];
+            g_param_squares[sqr][0] - parmY => float temp_dist;
+            if (temp_dist < dist[sqr])
+                temp_dist => dist[sqr];
+            //<<< "outside", sqr, " C" >>>; // DEBUG
+ 
+        }
+        if ( g_square_on[sqr] && (parmY > g_param_squares[sqr][1])) {
+            1 => outside[sqr];
+            parmY - g_param_squares[sqr][1] => float temp_dist;
+            if (temp_dist < dist[sqr])
+                temp_dist => dist[sqr];
+            //<<< "outside", sqr, " D" >>>; // DEBUG
+ 
+        }
+    } 
+    0.0 => float distort;
+    // are we outside both? if so, pick the smallest distance
+    if ( outside[0] && outside[1] ){
+        if (dist[0] < dist[1] )
+            dist[0] => distort;
+        else
+            dist[1] => distort;
+    }
+    else if ( outside[0] && (g_square_on[1] == 0)) {
+        dist[0] => distort;
+    }
+    else if ( outside[1] && (g_square_on[0] == 0)) {
+        dist[1] => distort;
+    }
+    
+    // calc parameters based on distortion amount
+    if ( distort > 0.0 ) {
+        0.5 + 0.6*distort => float temp_d;
+        temp_d => noiz[player].gain;
+        1.0 - temp_d => step[player].gain;
+    }
+    else {
+        0.0 => noiz[player].gain;
+        1.0 => step[player].gain;
     }
     
     1 => g_synth_latch[player];    
@@ -352,7 +438,7 @@ fun void reportDensities()
     while( 1 ) {
         que[0].calcDensity( now ) => float dens1;
         que[1].calcDensity( now ) => float dens2;
-        <<< " Densities: ", dens1, dens2 >>>;    // DEBUG
+        //<<< " Densities: ", dens1, dens2 >>>;    // DEBUG
         
         // send messages to processing
         osc_proc_out.startMsg("/dens", "i f ");
@@ -393,24 +479,19 @@ while( 1 )
 fun void eventListener(int player)
 {
     player => int pl;
-    while( 1 )
-    {
+    while( 1 ) {
         osc_in_event[pl] => now;
-        while( osc_in_event[pl].nextMsg() )
-        {
+        while( osc_in_event[pl].nextMsg() ) {
             osc_in_event[pl].getFloat() => float x_in;
             osc_in_event[pl].getFloat() => float y_procc_in;
             g_vert_max - y_procc_in => float y_synth_in;
-            
-            calcNote(y_synth_in) => int note;
-            
-            if( g_print_osc_debug )
-            {
+                        
+            if( g_print_osc_debug ) {
                 //<<< " in event from player: ", pl, x_in, y_synth_in, note >>>;
             }
+            
             // play note
-            //spork ~playSynth(pl, note, x_in);
-            playSynth(pl, note, x_in);
+            playSynth(pl, x_in, y_synth_in);
             
             // send message to processing
             sendEventToProcc(pl, x_in, y_procc_in);
