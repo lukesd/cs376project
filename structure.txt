@@ -9,3 +9,10 @@ Notes:
 G Bb C D F
 
 + Eb on the Eb chord (but not really necessary)
+
+In chuck sequence of half-notes:
+verse = [0 0 1 1 0 0 0 0]x2
+chorus = [2 3 4 4]x4
+
+so 1 time through verse and chorus = 16 bars = 4 x 4bar pattern
+2 times through = 8 x 4bar patterns

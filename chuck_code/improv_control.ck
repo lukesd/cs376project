@@ -57,10 +57,11 @@ ticks_per_beat * beats_per_bar * bars_per_pattern => int g_pattern_len; // ticks
 [[0.8, 0.8, 1.0, 0.5, 1.0, 1.0, 0.6, 1.0],[0.8, 0.8, 1.0, 1.0, 0.5, 1.0, 0.6, 1.0]] @=> float g_prg_upper_d[][];
 [[1, 1, 1, 1, 1, 1, 1, 1],[0, 0, 0, 0, 1, 1, 1, 1]] @=> int g_prg_box_on[][];
 
-
 8 => int g_game_len;      // number of program steps in a game
 0 => int g_current_prg;   // current location in game
-
+-1 => int g_chord_ct;     // number of half-note chords we've played
+1 => int g_prev_chord;    // chord number of previou chord played
+    
 [[0.0, 1.0, 0.0, 1.0],[0.0, 1.0, 0.0, 1.0]] @=> float g_param_squares[][];  // boundaries for good notes [low pitch, high pitch, low timbre, high timbre]
 [0, 0] @=> int g_square_on[];
 
@@ -106,6 +107,7 @@ fun void sendBoundsToProcc(int player)
 }
 
 tickEvent tick_e;
+tickEvent half_note_e;
 
 // audio processing for drums
 SndBuf hh_buf => Gain hh_gain => dac; // hi hat
@@ -133,26 +135,31 @@ SndBuf chords[g_num_chords];
 "Eb.wav" => chords[2].read;
 "Dm7.wav" => chords[3].read;
 "Gm-2.wav" => chords[4].read;
-
+for (0 => int i; i < g_num_chords; i++ ) {
+    chords[i].samples() => chords[i].pos;
+    0.08 => chords[i].gain;
+    chords[i] => dac;
+}
+         
 // process to play sequencer 
 0 => int g_seq_on;
 0 => int g_tick_ct;
-
-Shred shred0;
-Shred shred1;
-Shred shred2;
-Shred shred3;
 
 fun void startStopSequencer()
 {
     if ( g_seq_on ) {
         0 => g_seq_on;
         <<< "stopping sequencer ", "" >>>;
+        0 => cr_buf.pos;                                            // play crash
+        tick_t * 16 => now;                                         // wait a measure
+        chords[g_prev_chord].samples() => chords[g_prev_chord].pos; // then stop chord
+        
     }
     else {
         1 => g_seq_on;     // start the sequencer
         0 => g_tick_ct;
         0 => g_current_prg;
+        -1 => g_chord_ct;
         <<< "starting sequencer", "">>>;
         sendGameParams();
     }
@@ -172,6 +179,28 @@ fun void tickClock()
         }
     }
 }
+   
+// the chord accompaniment
+[0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 2, 3, 4, 4, 2, 3, 4, 4, 2, 3, 4, 4, 2, 3, 4, 4 ] @=> int g_chord_seq[];
+fun void halfNoteHandler( tickEvent event )
+{
+    while( 1 ) {
+        event => now;
+        if (g_seq_on && ((event.tick_num % 8) == 0)) {        // if this is a half-note
+            g_chord_ct++;
+            playCurrentChord();
+        }
+    }
+}
+    
+fun void playCurrentChord() {
+    // stop previous chord:
+    chords[g_prev_chord].samples() => chords[g_prev_chord].pos;
+    // start new chord:
+    g_chord_seq[ g_chord_ct % g_chord_seq.cap() ] => g_prev_chord;
+    5000 => chords[g_prev_chord].pos;  // start partway in to avoid attack sound  
+} 
+  
 
 fun void sendNextProgram()
 {
@@ -252,9 +281,10 @@ class densityQueue
 }
 
 densityQueue que[g_num_players];
-
+  
 // stuff for instruments -----------------------------------------------------------
-[36, 38, 41, 43, 45, 48, 50, 53, 55, 57, 60, 62, 65, 67, 69, 72, 74, 77, 79, 81] @=> int g_scale[];    // 2 8ve of pentatonic the scale that notes are played on
+//[36, 38, 41, 43, 45, 48, 50, 53, 55, 57, 60, 62, 65, 67, 69, 72, 74, 77, 79, 81] @=> int g_scale[];    // 4 8ve of pentatonic the scale that notes are played on
+[58-24, 60-24, 62-24, 65-24, 67-24, 58-12, 60-12, 62-12, 65-12, 67-12, 58, 60, 62, 65, 67, 58+12, 60+12, 62+12, 65+12, 67+12] @=> int g_scale[];    // 2 8ve of pentatonic the scale for 'I shot the sherriff'
 g_scale.cap() => int g_num_notes;
 0.0 => float g_vert_min;                   // minimum vertical input value from iphone
 1.0 => float g_vert_max;                   // maximum vertical input value from iphone
@@ -342,18 +372,15 @@ fun void playSynth(int player, float parmX, float parmY)
         lo_base + 10000.0 => lp_flt[player].freq; 
     }
     
-    // calc noise amount depending on whether inside or outide squares
-    // are we outside square 1?
-    
-    // are we outside square 2? By how much?
-    [0, 0] @=> int outside[];
-    [100.0, 100.0] @=> float dist[];
+    // calc noise amount depending on whether inside or outside squares, and by how much
+    [0, 0] @=> int outside[];                 // 1 if outside square
+    [100.0, 100.0] @=> float dist[];          // distance to nearest boundary
     for (0 => int sqr; sqr < 2; sqr++) {
         if ( g_square_on[sqr] && (parmX < g_param_squares[sqr][2])) {
             1 => outside[sqr];
             g_param_squares[sqr][2] - parmX => dist[sqr];
             //<<< "outside", sqr, " A" >>>; // DEBUG
-        }
+        }  
         if ( g_square_on[sqr] && (parmX > g_param_squares[sqr][3])) {
             1 => outside[sqr];
             parmX - g_param_squares[sqr][3] => float temp_dist;
@@ -396,7 +423,7 @@ fun void playSynth(int player, float parmX, float parmY)
     
     // calc parameters based on distortion amount
     if ( distort > 0.0 ) {
-        0.5 + 0.6*distort => float temp_d;
+        0.4 + 0.6*distort => float temp_d;
         temp_d => noiz[player].gain;
         1.0 - temp_d => step[player].gain;
     }
@@ -466,7 +493,8 @@ spork ~ seqHandler1( tick_e );
 spork ~ seqHandler2( tick_e );
 spork ~ seqHandler3( tick_e );
 spork ~ seqHandler4( tick_e );
-
+spork ~ halfNoteHandler( tick_e );
+  
 
 // make time ---------------------------------------------------------------------
 while( 1 )
