@@ -56,6 +56,10 @@ ticks_per_beat * beats_per_bar * bars_per_pattern => int g_pattern_len; // ticks
 [[0.2, 0.2, 0.5, 0.0, 0.5, 0.3, 0.0, 0.0],[0.2, 0.2, 0.5, 0.5, 0.0, 0.3, 0.0, 0.0]] @=> float g_prg_lower_d[][];   // density
 [[0.8, 0.8, 1.0, 0.5, 1.0, 1.0, 0.6, 1.0],[0.8, 0.8, 1.0, 1.0, 0.5, 1.0, 0.6, 1.0]] @=> float g_prg_upper_d[][];
 [[1, 1, 1, 1, 1, 1, 1, 1],[0, 0, 0, 0, 1, 1, 1, 1]] @=> int g_prg_box_on[][];
+[[64, 64, 48, 48, 32, 24, 36, 64],[64, 64, 48, 48, 32, 24, 36, 64]] @=> int g_prg_notes[][]; // number of notes to play
+
+[64, 64] @=> int g_notes_left[];
+
 
 8 => int g_game_len;      // number of program steps in a game
 0 => int g_current_prg;   // current location in game
@@ -86,6 +90,12 @@ fun void sendBoundsToProcc(int player)
     g_prg_upper_t[player][g_current_prg] => g_param_squares[player][3];
     g_prg_box_on[player][g_current_prg] => g_square_on[player];
     
+    // set number of notes left and send to procc
+    g_prg_notes[player][g_current_prg] => g_notes_left[player];
+    osc_proc_out.startMsg("/notes_remaining", "i i ");
+    player => osc_proc_out.addInt;
+    g_notes_left[player] => osc_proc_out.addInt;
+    
     // send pitch and timbre
     osc_proc_out.startMsg("/rect", "i f f f f");
     player => osc_proc_out.addInt;
@@ -95,13 +105,13 @@ fun void sendBoundsToProcc(int player)
     g_prg_upper_t[player][g_current_prg] => osc_proc_out.addFloat;
     
     // send density
-    osc_proc_out.startMsg("/dens_limit", "i f f");
-    player => osc_proc_out.addInt;
-    g_prg_lower_d[player][g_current_prg] => osc_proc_out.addFloat;
-    g_prg_upper_d[player][g_current_prg] => osc_proc_out.addFloat;
+    //osc_proc_out.startMsg("/dens_limit", "i f f");
+    //player => osc_proc_out.addInt;
+    //g_prg_lower_d[player][g_current_prg] => osc_proc_out.addFloat;
+    //g_prg_upper_d[player][g_current_prg] => osc_proc_out.addFloat;
     
     // send square on/off
-     osc_proc_out.startMsg("/rect_on", "i i");
+    osc_proc_out.startMsg("/rect_on", "i i");
     player => osc_proc_out.addInt;
     g_prg_box_on[player][g_current_prg] => osc_proc_out.addInt;
 }
@@ -438,10 +448,24 @@ fun void playSynth(int player, float parmX, float parmY)
 // actually start a note
 fun void triggerSynth( int player )
 {
-    env[player].keyOn();
-    que[player].addEvent( now );
-    50::ms => now;
-    env[player].keyOff();
+    if (g_notes_left[player]) {
+        // play note
+        env[player].keyOn();
+        //que[player].addEvent( now );  // for calculating note density
+        
+        // update count
+        g_notes_left[player]--;
+        
+        // send osc msg to procc
+        osc_proc_out.startMsg("/notes_remaining", "i i ");
+        player => osc_proc_out.addInt;
+        g_notes_left[player] => osc_proc_out.addInt;
+        
+        // turn off note
+        50::ms => now;
+        env[player].keyOff();
+    }
+    <<<"DEBUG notes left ", player, g_notes_left [player] >>>;
 }    
     
 // wait 'til a tick.  if a note is scheduled, trigger it.
@@ -488,7 +512,7 @@ spork ~ tickClock();
 spork ~ synthTimer( tick_e );
 spork ~ keyboardListener();
 spork ~ sendTimeProgress( tick_e );
-spork ~ reportDensities();  
+//spork ~ reportDensities();  
 spork ~ seqHandler1( tick_e );
 spork ~ seqHandler2( tick_e );
 spork ~ seqHandler3( tick_e );
