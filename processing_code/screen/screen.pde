@@ -5,9 +5,6 @@ import netP5.*;
 import geomerative.*;
 import processing.opengl.*;
 
-
-
-
 OscP5 oscP5;
 
 
@@ -25,6 +22,7 @@ int[] player2Rectangle = new int[4];
 boolean player1RectangleIndicator = false;
 boolean player2RectangleIndicator = false;
 
+/* OLD DENSITY - DEPRECATED
 int player1Density = 0;
 int player2Density = 0;
 int[] player1DensityBoundaries = new int[2];
@@ -33,6 +31,13 @@ boolean player1DensityIndicator = false;
 boolean player2DensityIndicator = false;
 boolean player1DensityBoundariesIndicator = false;
 boolean player2DensityBoundariesIndicator = false;
+*/
+
+int maxNumberOfNotes = 64;
+int player1RemainingNotes = maxNumberOfNotes;
+int player2RemainingNotes = maxNumberOfNotes;
+boolean player1RemainingNotesIndicator = false;
+boolean player2RemainingNotesIndicator = false;
 
 int time = 0;
 boolean timeIndicator = false;
@@ -43,10 +48,12 @@ boolean remainingPatternsIndicator = true;
 // Mask
 RPolygon rectanglesMask;
 RPolygon rectanglesMaskBorder;
+/* OLD DENSITY MASKS - DEPRECATED
 RPolygon density1Mask;
 RPolygon density1MaskBorder;
 RPolygon density2Mask;
 RPolygon density2MaskBorder;
+*/
 
 
 /*
@@ -100,13 +107,6 @@ void drawTopBar() {
   rect(2*padding + bar_width, padding, screen_width, bar_width);
 }
 
-void displayTimeText() {
-  fill(255);
-  textAlign(CENTER);
-  textSize(padding);
-  text("Time", 2*padding + bar_width + 0.5*screen_width, padding*0.9);
-}
-
 void drawCanevas() {
   noFill();
   stroke(255);
@@ -144,7 +144,41 @@ void drawActivePlayer2() {
   ellipse(x_screen_origin + player2Position[0], y_screen_origin - screen_height  + player2Position[1], 80, 80);
 }
 
-/*
+void drawPlayer1RemainingNotes() {
+  fill(255, 0, 0);
+  stroke(255, 0, 0);
+  rect(
+    padding,
+    y_density1_origin - int(player1RemainingNotes/float(maxNumberOfNotes) * screen_height),
+    bar_width,
+    int(player1RemainingNotes/float(maxNumberOfNotes) * screen_height));
+}
+
+void drawPlayer2RemainingNotes() {
+  fill(0, 255, 0);
+  stroke(0, 255, 0);
+  rect( 
+    x_density2_origin,
+    y_density2_origin - int(player2RemainingNotes/float(maxNumberOfNotes) * screen_height),
+    bar_width,
+    int(player2RemainingNotes/float(maxNumberOfNotes) * screen_height));
+}
+
+void displayPlayer1RemainingNotesText() {
+  fill(255);
+  textAlign(CENTER);
+  textSize(padding * .8);
+  text(str(player1RemainingNotes), padding + 0.5*bar_width, y_density1_origin - int(player1RemainingNotes/float(maxNumberOfNotes) * screen_height));
+}
+
+void displayPlayer2RemainingNotesText() {
+  fill(255);
+  textAlign(CENTER);
+  textSize(padding * .8);
+  text(str(player2RemainingNotes), 3*padding + screen_width + 1.5*bar_width, y_density1_origin - int(player2RemainingNotes/float(maxNumberOfNotes) * screen_height));
+}
+
+/* RECTANGLES WITHOUT MASKS - DEPRECATED
 void drawPlayer1Rectangle() {
   noFill();
   stroke(0, 0, 255);
@@ -168,6 +202,7 @@ void drawPlayer2Rectangle() {
 }
 */
 
+/* OLD DENSITY - DEPRECATED
 void drawPlayer1Density() {
   fill(255, 0, 0);
   stroke(255, 0, 0);
@@ -209,18 +244,33 @@ void drawPlayer2DensityBoundaries() {
     player2DensityBoundaries[1] - player2DensityBoundaries[0]
   );
 }
+*/
 
 void drawTime() {
   fill(255);
   rect(2*padding + bar_width, padding, time, bar_width);
 }
 
+void displayTimeText() {
+  fill(255);
+  textAlign(CENTER);
+  textSize(padding * .8);
+  if (remainingPatterns != 1) {
+    text("Time (" + str(remainingPatterns) + " patterns remaining)", 2*padding + bar_width + 0.5*screen_width, padding*0.9);
+  }
+  else {
+    text("Time (last pattern remaining)", 2*padding + bar_width + 0.5*screen_width, padding*0.9);
+  }
+}
+
+/*
 void displayRemainingPatterns() {
   fill(255);
   textAlign(CENTER);
   textSize(bar_width);
   text(str(remainingPatterns), 3*padding + screen_width + bar_width*1.5, padding + bar_width*0.9);
 }
+*/
 
 void generateRectanglesMask() {
   // Generate the canevas
@@ -258,6 +308,8 @@ void generateRectanglesMask() {
   rectanglesMaskBorder = rectanglesMaskBorder.union(r2);
 }
 
+
+/* OLD DENSITY MASKS - DEPRECATED
 void generateDensity1Mask() {
   // Generate the canevas
   RPolygon s = RPolygon.createRectangle(
@@ -309,12 +361,6 @@ void generateDensity2Mask() {
   density2MaskBorder = new RPolygon();
   density2MaskBorder = density2MaskBorder.union(r);
 }
-
-
-
-
-
-
 
 
 
@@ -376,16 +422,19 @@ void draw() {
     drawPlayer2();
   }
   
+  /* OLD RECTANGLES - DEPRECATED 
   // Player1 Rectangle
   if (player1RectangleIndicator) {
-    //drawPlayer1Rectangle();
+    drawPlayer1Rectangle();
   }
   
   // Player2 Rectangle
   if (player2RectangleIndicator) {
-    //drawPlayer2Rectangle();
+    drawPlayer2Rectangle();
   }
+  */
   
+  /* OLD DENSITY - DEPRECATED
   // Player1 Density
   if (player1DensityIndicator) {
     drawPlayer1Density();
@@ -431,15 +480,30 @@ void draw() {
     stroke(0, 0, 255);
     density2MaskBorder.draw(g);
   }
+  */
+  
+  // Player1 Remaining Notes
+  if (player1RemainingNotesIndicator) {
+    drawPlayer1RemainingNotes();
+    displayPlayer1RemainingNotesText();
+  }
+  
+  // Player2 Remaining Notes
+  if ((player2RemainingNotesIndicator)) {
+    drawPlayer2RemainingNotes();
+    displayPlayer2RemainingNotesText();
+  }
   
   // Time
   if (timeIndicator) {
     drawTime();
   }
   
+  /*
   if (remainingPatternsIndicator) {
     displayRemainingPatterns();
   }
+  */
    
   if (player2RectangleIndicator) {
     // Generate the mask
@@ -481,7 +545,8 @@ void oscEvent(OscMessage theOscMessage) {
       + theOscMessage.typetag());
   }
   
-  // check if theOscMessage has the address pattern /dens_limit. 
+   /* OLD DENSITY - DEPRECATED 
+  // check if theOscMessage has the address pattern /dens_limit.
   if(theOscMessage.checkAddrPattern("/dens_limit") && theOscMessage.checkTypetag("iff")) {
     getDensityBoundaries(theOscMessage);
     println("### received an osc message with address pattern "
@@ -490,7 +555,7 @@ void oscEvent(OscMessage theOscMessage) {
       + theOscMessage.typetag());
   }
   
-  // check if theOscMessage has the address pattern /dens. 
+  // check if theOscMessage has the address pattern /dens.
   if(theOscMessage.checkAddrPattern("/dens") && theOscMessage.checkTypetag("if")) {
     getDensity(theOscMessage);
     println("### received an osc message with address pattern "
@@ -498,8 +563,17 @@ void oscEvent(OscMessage theOscMessage) {
       + " and typetag "
       + theOscMessage.typetag());
   }
+  */
+  // check if theOscMessage has the address pattern /dens_limit.
+  if(theOscMessage.checkAddrPattern("/notes_remaining") && theOscMessage.checkTypetag("ii")) {
+    getRemainingNotes(theOscMessage);
+    println("### received an osc message with address pattern "
+      + theOscMessage.addrPattern()
+      + " and typetag "
+      + theOscMessage.typetag());
+  }
   
-  // check if theOscMessage has the address pattern /dens. 
+  // check if theOscMessage has the address pattern /time. 
   if(theOscMessage.checkAddrPattern("/time") && theOscMessage.checkTypetag("f")) {
     getTime(theOscMessage);
     println("### received an osc message with address pattern "
@@ -568,6 +642,7 @@ void getRectangleBoundaries(OscMessage theOscMessage) {
   println("### ### Rectangle boundaries for player " + player + ": x1 = " + x1 + ", x2 = " + x2 + " y1 = " + y1 + ", y2 = " + y2);
 }
 
+/* OLD DENSITY - DEPRECATED
 void getDensityBoundaries(OscMessage theOscMessage) {
   // parse theOscMessage and extract the values from the osc message arguments.
   int player = theOscMessage.get(0).intValue();
@@ -604,6 +679,24 @@ void getDensity(OscMessage theOscMessage) {
   else if (player == 1) {
     player2Density = int(d * screen_height);
     player2DensityIndicator = true;
+  }
+}
+*/
+
+void getRemainingNotes(OscMessage theOscMessage) {
+  // parse theOscMessage and extract the values from the osc message arguments.
+  int player = theOscMessage.get(0).intValue();
+  int n = theOscMessage.get(1).intValue();
+  
+  // First player
+  if (player == 0) {
+    player1RemainingNotes = n;
+    player1RemainingNotesIndicator = true;
+  }
+  // Second player
+  else if (player == 1) {
+    player2RemainingNotes = n;
+    player2RemainingNotesIndicator = true;
   }
 }
 
