@@ -1,5 +1,38 @@
 // improv_control.ck
 
+// logging file stuff ----------------------------------------------------------
+"../logs/out" => string base_filename;                    // default file name
+if( me.args() > 0 ) me.arg(0) => base_filename;   // look at command line for new file name
+
+// filenames for all outputs
+string file_names[3];
+base_filename + "_plyr1.txt" => file_names[0];
+base_filename + "_plyr2.txt" => file_names[1];
+base_filename + "_bnds.txt" => file_names[2];
+
+FileIO fout[3];
+
+// open files for writing
+fun void openFiles()
+{
+    for (0 => int i; i < 3; i++) {
+        fout[i].open( file_names[i], FileIO.WRITE );
+        if( !fout[i].good() ) {
+            cherr <= "can't open file for writing " <= file_names[i] <= IO.newline();
+            me.exit();
+        }
+    }
+}
+
+fun void closeFiles()
+{
+    for (0 => int i; i < 3; i++) {
+        fout[i].close();
+    }
+}
+
+
+
 // networking stuff  -----------------------------------------------------------
 1 => int g_print_osc_debug;
 2 => int g_num_players;
@@ -96,7 +129,7 @@ fun void sendBoundsToProcc(int player)
     player => osc_proc_out.addInt;
     g_notes_left[player] => osc_proc_out.addInt;
     
-    // send pitch and timbre
+    // send pitch and timbre to procc
     osc_proc_out.startMsg("/rect", "i f f f f");
     player => osc_proc_out.addInt;
     g_prg_lower_p[player][g_current_prg] => osc_proc_out.addFloat;
@@ -114,7 +147,12 @@ fun void sendBoundsToProcc(int player)
     osc_proc_out.startMsg("/rect_on", "i i");
     player => osc_proc_out.addInt;
     g_prg_box_on[player][g_current_prg] => osc_proc_out.addInt;
+    
+    // write bounds to text file
+    writeBounds();
 }
+
+
 
 tickEvent tick_e;
 tickEvent half_note_e;
@@ -157,15 +195,18 @@ for (0 => int i; i < g_num_chords; i++ ) {
 
 fun void startStopSequencer()
 {
-    if ( g_seq_on ) {
+    if ( g_seq_on ) {     // stop the sequencer
         0 => g_seq_on;
         <<< "stopping sequencer ", "" >>>;
         0 => cr_buf.pos;                                            // play crash
         tick_t * 16 => now;                                         // wait a measure
         chords[g_prev_chord].samples() => chords[g_prev_chord].pos; // then stop chord
-        
+        0 => g_notes_left[0];                                       // turn off synths
+        0 => g_notes_left[1];
+        closeFiles();
     }
     else {
+        openFiles();
         1 => g_seq_on;     // start the sequencer
         0 => g_tick_ct;
         0 => g_current_prg;
@@ -179,11 +220,13 @@ fun void tickClock()
 {
     while( 1 ) {
         tick_t => now;
-        g_tick_ct => tick_e.tick_num;
+        // g_tick_ct => tick_e.tick_num;
+        g_tick_ct % g_pattern_len => tick_e.tick_num;
         tick_e.broadcast();
         g_tick_ct++;
-        if (g_tick_ct == g_pattern_len) {
-            0 => g_tick_ct;
+        if ( !(g_tick_ct % g_pattern_len) ) {
+        //if (g_tick_ct == g_pattern_len) {
+            //0 => g_tick_ct;
             if( g_seq_on )
                 sendNextProgram();
         }
@@ -210,7 +253,6 @@ fun void playCurrentChord() {
     g_chord_seq[ g_chord_ct % g_chord_seq.cap() ] => g_prev_chord;
     5000 => chords[g_prev_chord].pos;  // start partway in to avoid attack sound  
 } 
-  
 
 fun void sendNextProgram()
 {
@@ -352,11 +394,15 @@ for (0 => int i; i < g_num_players; i++) {
     
 // stuff for playing notes
 [0,0] @=> int g_synth_latch[];
+float g_synth_parms[2][2];
 
 // sets parameters for next note
 fun void playSynth(int player, float parmX, float parmY)    
 {   
     //<<< "note from player ", player >>>;   // DEBUG
+    parmX => g_synth_parms[player][0];
+    parmY => g_synth_parms[player][1];
+    
     calcNote(parmY) => int note;
 
     if (player == 0) 
@@ -461,11 +507,14 @@ fun void triggerSynth( int player )
         player => osc_proc_out.addInt;
         g_notes_left[player] => osc_proc_out.addInt;
         
+        // write to text file
+        writeNote(player, g_synth_parms[player][0], g_synth_parms[player][0]);
+         
         // turn off note
         50::ms => now;
         env[player].keyOff();
     }
-    <<<"DEBUG notes left ", player, g_notes_left [player] >>>;
+    // <<<"DEBUG notes left ", player, g_notes_left [player] >>>;
 }    
     
 // wait 'til a tick.  if a note is scheduled, trigger it.
@@ -593,7 +642,7 @@ fun void seqHandler2( tickEvent event )
         }
     }
 }
-
+    
 // the snare sequence
 fun void seqHandler3( tickEvent event )
 {
@@ -615,8 +664,6 @@ fun void seqHandler3( tickEvent event )
 // the crash sequence
 fun void seqHandler4( tickEvent event )
 {
-    // 1, e, &, a, 2, e, &, a, 3, e, &, a, 4, e, &, a,   
-    [2, 0, 0, 0, 2, 0, 0, 0, 2, 0, 0, 0, 2, 0, 1, 0 ] @=> int seq[];
     while( 1 ) {
         event => now;
         if (g_seq_on ) {
@@ -626,6 +673,37 @@ fun void seqHandler4( tickEvent event )
         }
     }
 } 
+
+// write note data to txt file
+fun void writeNote(int pl, float x, float y)
+{
+    if ( fout[pl].good() )
+        fout[pl] <= g_tick_ct <= ", " <= x <= ", " <= y <= IO.newline();
+}
+
+// write program bounds data to txt file
+fun void writeBounds()
+{
+    if ( fout[2].good() ) {
+        fout[2] <= g_tick_ct <= ", ";
+        
+        fout[2] <= g_prg_box_on[0][g_current_prg] <= ", ";       // box 1, on/off
+        fout[2] <= g_prg_lower_t[0][g_current_prg] <= ", ";      // box 1, lower t
+        fout[2] <= g_prg_upper_t[0][g_current_prg] <= ", ";      // box 1, upper t
+        fout[2] <= g_prg_lower_p[0][g_current_prg] <= ", ";      // box 1, lower p
+        fout[2] <= g_prg_upper_p[0][g_current_prg] <= ", ";      // box 1, upper p
+        
+        fout[2] <= g_prg_box_on[1][g_current_prg] <= ", ";       // box 2, on/off
+        fout[2] <= g_prg_lower_t[1][g_current_prg] <= ", ";      // box 2, lower t
+        fout[2] <= g_prg_upper_t[1][g_current_prg] <= ", ";      // box 2, upper t
+        fout[2] <= g_prg_lower_p[1][g_current_prg] <= ", ";      // box 2, lower p
+        fout[2] <= g_prg_upper_p[1][g_current_prg] <= ", ";      // box 2, upper p
+        
+        fout[2] <= g_prg_notes[0][g_current_prg] <= ", ";        // number of notes for player 1
+        fout[2] <= g_prg_notes[1][g_current_prg] <= ", ";        // number of notes for player 2
+        fout[2] <= IO.newline();
+    }
+}     
 
 // keyboard listener 
 fun void keyboardListener()
@@ -643,11 +721,10 @@ fun void keyboardListener()
         hiKbd => now;
         while( hiKbd.recv( msgKbd ) ) {
             // check for action type
-            if( msgKbd.isButtonDown() ) {
-                // space key
-                if( msgKbd.which == 44) {
+            if( msgKbd.isButtonDown() ) {                
+                //if( msgKbd.which == 44) {   // space key
+                if( msgKbd.which == 30) {    // '1' key
                     startStopSequencer();
-                   // <<< "SPACE" >>>;
                 }
                 else {
                     //<<< "unknown key ", msgKbd.which >>>;
@@ -656,4 +733,3 @@ fun void keyboardListener()
         }
     }
 }
-    
