@@ -202,7 +202,7 @@ void generateRectanglesMask() {
     y_screen_origin - player1Rectangle[3],
     player1Rectangle[1] - player1Rectangle[0],
     player1Rectangle[3] - player1Rectangle[2]
-  );&&
+  );
   
   // Generate Rectangle 2
   RPolygon r2 = RPolygon.createRectangle(
