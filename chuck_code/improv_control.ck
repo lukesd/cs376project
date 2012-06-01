@@ -6,15 +6,17 @@ if( me.args() > 0 ) me.arg(0) => base_filename;   // look at command line for ne
 
 // filenames for all outputs
 string file_names[3];
-base_filename + "_plyr1.txt" => file_names[0];
-base_filename + "_plyr2.txt" => file_names[1];
-base_filename + "_bnds.txt" => file_names[2];
 
 FileIO fout[3];
 
 // open files for writing
+0 => int g_file_num;
 fun void openFiles()
 {
+    g_file_num => int num;
+    base_filename + "_plyr1_" + num + ".txt" => file_names[0];
+    base_filename + "_plyr2_" + num + ".txt" => file_names[1];
+    base_filename + "_bnds_" + num + ".txt" => file_names[2];
     for (0 => int i; i < 3; i++) {
         fout[i].open( file_names[i], FileIO.WRITE );
         if( !fout[i].good() ) {
@@ -22,6 +24,7 @@ fun void openFiles()
             me.exit();
         }
     }
+    g_file_num++;
 }
 
 fun void closeFiles()
@@ -102,15 +105,21 @@ ticks_per_beat * beats_per_bar * bars_per_pattern => int g_pattern_len; // ticks
 [[0.0, 1.0, 0.0, 1.0],[0.0, 1.0, 0.0, 1.0]] @=> float g_param_squares[][];  // boundaries for good notes [low pitch, high pitch, low timbre, high timbre]
 [0, 0] @=> int g_square_on[];
 
+0 => int g_seq_on;
+0 => int g_tick_ct;
+0 => int g_send_bounds;
+
+
 fun void sendGameParams()
 {
+    if ( g_send_bounds ) {
         <<< "sending program ", g_current_prg >>>;  // DEBUG
         sendBoundsToProcc(0);
         sendBoundsToProcc(1);
-        
-        // send program counts left
-        osc_proc_out.startMsg("/remaining", "i");
-        g_game_len - g_current_prg => osc_proc_out.addInt;
+    }   
+    // send program counts left
+    osc_proc_out.startMsg("/remaining", "i");
+    g_game_len - g_current_prg => osc_proc_out.addInt;
 }
     
 // send bounds to Processing
@@ -152,6 +161,25 @@ fun void sendBoundsToProcc(int player)
     writeBounds();
 }
 
+// turn off all extra display elements
+fun void sendAllBoundsOff()
+{    
+    // set number of notes left and send to procc
+    osc_proc_out.startMsg("/notes_remaining", "i i ");
+    0 => osc_proc_out.addInt;
+    0 => osc_proc_out.addInt;
+    osc_proc_out.startMsg("/notes_remaining", "i i ");
+    1 => osc_proc_out.addInt;
+    0 => osc_proc_out.addInt;
+       
+    // send squares off
+    osc_proc_out.startMsg("/rect_on", "i i");
+    0=> osc_proc_out.addInt;
+    0 => osc_proc_out.addInt;
+    osc_proc_out.startMsg("/rect_on", "i i");
+    1=> osc_proc_out.addInt;
+    0 => osc_proc_out.addInt;
+}
 
 
 tickEvent tick_e;
@@ -188,11 +216,8 @@ for (0 => int i; i < g_num_chords; i++ ) {
     0.08 => chords[i].gain;
     chords[i] => dac;
 }
-         
-// process to play sequencer 
-0 => int g_seq_on;
-0 => int g_tick_ct;
 
+// process to play sequencer 
 fun void startStopSequencer()
 {
     if ( g_seq_on ) {     // stop the sequencer
@@ -204,9 +229,12 @@ fun void startStopSequencer()
         0 => g_notes_left[0];                                       // turn off synths
         0 => g_notes_left[1];
         closeFiles();
+        sendAllBoundsOff();
     }
     else {
         openFiles();
+        if (!g_send_bounds )
+            sendAllBoundsOff();
         1 => g_seq_on;     // start the sequencer
         0 => g_tick_ct;
         0 => g_current_prg;
@@ -225,13 +253,15 @@ fun void tickClock()
         tick_e.broadcast();
         g_tick_ct++;
         if ( !(g_tick_ct % g_pattern_len) ) {
-        //if (g_tick_ct == g_pattern_len) {
+            //if (g_tick_ct == g_pattern_len) {
             //0 => g_tick_ct;
             if( g_seq_on )
                 sendNextProgram();
         }
     }
 }
+         
+
    
 // the chord accompaniment
 [0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 2, 3, 4, 4, 2, 3, 4, 4, 2, 3, 4, 4, 2, 3, 4, 4 ] @=> int g_chord_seq[];
@@ -503,9 +533,11 @@ fun void triggerSynth( int player )
         g_notes_left[player]--;
         
         // send osc msg to procc
-        osc_proc_out.startMsg("/notes_remaining", "i i ");
-        player => osc_proc_out.addInt;
-        g_notes_left[player] => osc_proc_out.addInt;
+        if (g_send_bounds) {
+            osc_proc_out.startMsg("/notes_remaining", "i i ");
+            player => osc_proc_out.addInt;
+            g_notes_left[player] => osc_proc_out.addInt;
+        }
         
         // write to text file
         writeNote(player, g_synth_parms[player][0], g_synth_parms[player][0]);
@@ -724,10 +756,15 @@ fun void keyboardListener()
             if( msgKbd.isButtonDown() ) {                
                 //if( msgKbd.which == 44) {   // space key
                 if( msgKbd.which == 30) {    // '1' key
+                    1 => g_send_bounds;
+                    startStopSequencer();
+                }
+                else if( msgKbd.which == 31) {    // '2' key
+                    0 => g_send_bounds;
                     startStopSequencer();
                 }
                 else {
-                    //<<< "unknown key ", msgKbd.which >>>;
+                    <<< "unknown key ", msgKbd.which >>>;
                 }
             }
         }
