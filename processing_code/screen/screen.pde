@@ -22,17 +22,6 @@ int[] player2Rectangle = new int[4];
 boolean player1RectangleIndicator = false;
 boolean player2RectangleIndicator = false;
 
-/* OLD DENSITY - DEPRECATED
-int player1Density = 0;
-int player2Density = 0;
-int[] player1DensityBoundaries = new int[2];
-int[] player2DensityBoundaries = new int[2];
-boolean player1DensityIndicator = false;
-boolean player2DensityIndicator = false;
-boolean player1DensityBoundariesIndicator = false;
-boolean player2DensityBoundariesIndicator = false;
-*/
-
 int maxNumberOfNotes = 64;
 int player1RemainingNotes = maxNumberOfNotes;
 int player2RemainingNotes = maxNumberOfNotes;
@@ -48,12 +37,6 @@ boolean remainingPatternsIndicator = true;
 // Mask
 RPolygon rectanglesMask;
 RPolygon rectanglesMaskBorder;
-/* OLD DENSITY MASKS - DEPRECATED
-RPolygon density1Mask;
-RPolygon density1MaskBorder;
-RPolygon density2Mask;
-RPolygon density2MaskBorder;
-*/
 
 
 /*
@@ -178,74 +161,6 @@ void displayPlayer2RemainingNotesText() {
   text(str(player2RemainingNotes), 3*padding + screen_width + 1.5*bar_width, y_density1_origin - int(player2RemainingNotes/float(maxNumberOfNotes) * screen_height));
 }
 
-/* RECTANGLES WITHOUT MASKS - DEPRECATED
-void drawPlayer1Rectangle() {
-  noFill();
-  stroke(0, 0, 255);
-  rect(
-    x_screen_origin + player1Rectangle[0],
-    y_screen_origin - player1Rectangle[3],
-    player1Rectangle[1] - player1Rectangle[0],
-    player1Rectangle[3] - player1Rectangle[2]
-  );
-}
-
-void drawPlayer2Rectangle() {
-  noFill();
-  stroke(0, 0, 255);
-  rect(
-    x_screen_origin + player2Rectangle[0],
-    y_screen_origin - player2Rectangle[3],
-    player2Rectangle[1] - player2Rectangle[0],
-    player2Rectangle[3] - player2Rectangle[2]
-  );
-}
-*/
-
-/* OLD DENSITY - DEPRECATED
-void drawPlayer1Density() {
-  fill(255, 0, 0);
-  stroke(255, 0, 0);
-  rect(
-    padding,
-    y_density1_origin - player1Density,
-    bar_width,
-    player1Density);
-}
-
-void drawPlayer2Density() {
-  fill(0, 255, 0);
-  stroke(0, 255, 0);
-  rect( 
-    x_density2_origin,
-    y_density2_origin - player2Density,
-    bar_width,
-    player2Density);
-}
-
-void drawPlayer1DensityBoundaries() {
-  noFill();
-  stroke(0, 0, 255);
-  rect(
-    padding,
-    y_density1_origin - player1DensityBoundaries[1],
-    bar_width,
-    player1DensityBoundaries[1] - player1DensityBoundaries[0]
-  );
-}
-
-void drawPlayer2DensityBoundaries() {
-  noFill();
-  stroke(0, 0, 255);
-  rect(
-    x_density2_origin,
-    y_density2_origin - player2DensityBoundaries[1],
-    bar_width,
-    player2DensityBoundaries[1] - player2DensityBoundaries[0]
-  );
-}
-*/
-
 void drawTime() {
   fill(255);
   rect(2*padding + bar_width, padding, time, bar_width);
@@ -309,61 +224,6 @@ void generateRectanglesMask() {
 }
 
 
-/* OLD DENSITY MASKS - DEPRECATED
-void generateDensity1Mask() {
-  // Generate the canevas
-  RPolygon s = RPolygon.createRectangle(
-    padding,
-    2*padding + bar_width,
-    bar_width,
-    screen_height
-  );
-  
-  // Generate Rectangle
-  RPolygon r = RPolygon.createRectangle(
-    padding,
-    y_density1_origin - player1DensityBoundaries[1],
-    bar_width,
-    player1DensityBoundaries[1] - player1DensityBoundaries[0]
-  );
-  
-  // Compute the mask
-  density1Mask = new RPolygon();
-  density1Mask = density1Mask.union(s);
-  density1Mask = density1Mask.diff(r);
-  
-  density1MaskBorder = new RPolygon();
-  density1MaskBorder = density1MaskBorder.union(r);
-}
-
-void generateDensity2Mask() {
-  // Generate the canevas
-  RPolygon s = RPolygon.createRectangle(
-    3*padding + bar_width + screen_width,
-    2*padding + bar_width,
-    bar_width,
-    screen_height
-  );
-  
-  // Generate Rectangle
-  RPolygon r = RPolygon.createRectangle(
-    x_density2_origin,
-    y_density2_origin - player2DensityBoundaries[1],
-    bar_width,
-    player2DensityBoundaries[1] - player2DensityBoundaries[0]
-  );
-  
-  // Compute the mask
-  density2Mask = new RPolygon();
-  density2Mask = density2Mask.union(s);
-  density2Mask = density2Mask.diff(r);
-  
-  density2MaskBorder = new RPolygon();
-  density2MaskBorder = density2MaskBorder.union(r);
-}
-
-
-
 
 /* a NetAddress contains the ip address and port number of a remote location in the network. */
 NetAddress myBroadcastLocation; 
@@ -421,66 +281,6 @@ void draw() {
   else {
     drawPlayer2();
   }
-  
-  /* OLD RECTANGLES - DEPRECATED 
-  // Player1 Rectangle
-  if (player1RectangleIndicator) {
-    drawPlayer1Rectangle();
-  }
-  
-  // Player2 Rectangle
-  if (player2RectangleIndicator) {
-    drawPlayer2Rectangle();
-  }
-  */
-  
-  /* OLD DENSITY - DEPRECATED
-  // Player1 Density
-  if (player1DensityIndicator) {
-    drawPlayer1Density();
-  }
-  
-  // Player2 Density
-  if (player2DensityIndicator) {
-    drawPlayer2Density();
-  }
-  
-  // Player1 Density Boundaries
-  if (player1DensityBoundariesIndicator) {
-    //drawPlayer1DensityBoundaries();
-        
-    // Generate the mask
-    generateDensity1Mask();
-    
-    // Draw the grey mask
-    fill(50, 50, 50, 230);
-    stroke(255);
-    density1Mask.draw(g);
-    
-    // Draw the mask inner border
-    noFill();
-    stroke(0, 0, 255);
-    density1MaskBorder.draw(g);
-  }
-  
-  // Player2 Density Boundaries
-  if (player2DensityBoundariesIndicator) {
-    //drawPlayer2DensityBoundaries();
-    
-    // Generate the mask
-    generateDensity2Mask();
-    
-    // Draw the grey mask
-    fill(50,50,50,230);
-    stroke(255);
-    density2Mask.draw(g);
-    
-    // Draw the mask inner border
-    noFill();
-    stroke(0, 0, 255);
-    density2MaskBorder.draw(g);
-  }
-  */
   
   // Player1 Remaining Notes
   if (player1RemainingNotesIndicator) {
@@ -544,26 +344,7 @@ void oscEvent(OscMessage theOscMessage) {
       + " and typetag "
       + theOscMessage.typetag());
   }
-  
-   /* OLD DENSITY - DEPRECATED 
-  // check if theOscMessage has the address pattern /dens_limit.
-  if(theOscMessage.checkAddrPattern("/dens_limit") && theOscMessage.checkTypetag("iff")) {
-    getDensityBoundaries(theOscMessage);
-    println("### received an osc message with address pattern "
-      + theOscMessage.addrPattern()
-      + " and typetag "
-      + theOscMessage.typetag());
-  }
-  
-  // check if theOscMessage has the address pattern /dens.
-  if(theOscMessage.checkAddrPattern("/dens") && theOscMessage.checkTypetag("if")) {
-    getDensity(theOscMessage);
-    println("### received an osc message with address pattern "
-      + theOscMessage.addrPattern()
-      + " and typetag "
-      + theOscMessage.typetag());
-  }
-  */
+
   // check if theOscMessage has the address pattern /dens_limit.
   if(theOscMessage.checkAddrPattern("/notes_remaining") && theOscMessage.checkTypetag("ii")) {
     getRemainingNotes(theOscMessage);
@@ -641,47 +422,6 @@ void getRectangleBoundaries(OscMessage theOscMessage) {
   
   println("### ### Rectangle boundaries for player " + player + ": x1 = " + x1 + ", x2 = " + x2 + " y1 = " + y1 + ", y2 = " + y2);
 }
-
-/* OLD DENSITY - DEPRECATED
-void getDensityBoundaries(OscMessage theOscMessage) {
-  // parse theOscMessage and extract the values from the osc message arguments.
-  int player = theOscMessage.get(0).intValue();
-  float d1 = theOscMessage.get(1).floatValue();
-  float d2 = theOscMessage.get(2).floatValue();
-  
-  // First player
-  if (player == 0) {
-    player1DensityBoundaries[0] = int(d1 * screen_height);
-    player1DensityBoundaries[1] = int(d2 * screen_height);
-    player1DensityBoundariesIndicator = true;
-  }
-  // Second player
-  else if (player == 1) {
-    player2DensityBoundaries[0] = int(d1 * screen_height);
-    player2DensityBoundaries[1] = int(d2 * screen_height);
-    player2DensityBoundariesIndicator = true;
-  }
-  
-  println("### ### Density boundaries for player " + player + ": low = " + d1 +", high = " + d2);
-}
-
-void getDensity(OscMessage theOscMessage) {
-  // parse theOscMessage and extract the values from the osc message arguments.
-  int player = theOscMessage.get(0).intValue();
-  float d = theOscMessage.get(1).floatValue();
-  
-  // First player
-  if (player == 0) {
-    player1Density = int(d * screen_height);
-    player1DensityIndicator = true;
-  }
-  // Second player
-  else if (player == 1) {
-    player2Density = int(d * screen_height);
-    player2DensityIndicator = true;
-  }
-}
-*/
 
 void getRemainingNotes(OscMessage theOscMessage) {
   // parse theOscMessage and extract the values from the osc message arguments.
