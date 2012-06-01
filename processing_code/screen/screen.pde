@@ -202,7 +202,7 @@ void generateRectanglesMask() {
     y_screen_origin - player1Rectangle[3],
     player1Rectangle[1] - player1Rectangle[0],
     player1Rectangle[3] - player1Rectangle[2]
-  );
+  );&&
   
   // Generate Rectangle 2
   RPolygon r2 = RPolygon.createRectangle(
@@ -283,13 +283,13 @@ void draw() {
   }
   
   // Player1 Remaining Notes
-  if (player1RemainingNotesIndicator) {
+  if (player1RemainingNotesIndicator && (player1RectangleIndicator || player2RectangleIndicator)) {
     drawPlayer1RemainingNotes();
     displayPlayer1RemainingNotesText();
   }
   
   // Player2 Remaining Notes
-  if ((player2RemainingNotesIndicator)) {
+  if (player2RemainingNotesIndicator && (player1RectangleIndicator || player2RectangleIndicator)) {
     drawPlayer2RemainingNotes();
     displayPlayer2RemainingNotesText();
   }
@@ -305,7 +305,8 @@ void draw() {
   }
   */
    
-  if (player2RectangleIndicator) {
+  if (player1RectangleIndicator || player2RectangleIndicator) {
+  
     // Generate the mask
     generateRectanglesMask();
     
@@ -336,9 +337,18 @@ void oscEvent(OscMessage theOscMessage) {
       + theOscMessage.typetag());
   }
   
-  // check if theOscMessage has the address pattern /new_note. 
+  // check if theOscMessage has the address pattern /rect. 
   if(theOscMessage.checkAddrPattern("/rect") && theOscMessage.checkTypetag("iffff")) {
     getRectangleBoundaries(theOscMessage);
+    println("### received an osc message with address pattern "
+      + theOscMessage.addrPattern()
+      + " and typetag "
+      + theOscMessage.typetag());
+  }
+
+  // check if theOscMessage has the address pattern /rect_on. 
+  if(theOscMessage.checkAddrPattern("/rect_on") && theOscMessage.checkTypetag("ii")) {
+    getRectanglesToDisplay(theOscMessage);
     println("### received an osc message with address pattern "
       + theOscMessage.addrPattern()
       + " and typetag "
@@ -371,6 +381,8 @@ void oscEvent(OscMessage theOscMessage) {
       + " and typetag "
       + theOscMessage.typetag());
   }
+  
+  
 }
 
 // Get the position of the player(s) from the OSC Message whose format is iff
@@ -409,7 +421,7 @@ void getRectangleBoundaries(OscMessage theOscMessage) {
     player1Rectangle[1] = int(x2 * screen_width);
     player1Rectangle[2] = int(y1 * screen_height);
     player1Rectangle[3] = int(y2 * screen_height);
-    player1RectangleIndicator = true;
+    //player1RectangleIndicator = true;
   }
   // Second player
   else if (player == 1) {
@@ -417,10 +429,10 @@ void getRectangleBoundaries(OscMessage theOscMessage) {
     player2Rectangle[1] = int(x2 * screen_width);
     player2Rectangle[2] = int(y1 * screen_height);
     player2Rectangle[3] = int(y2 * screen_height);
-    player2RectangleIndicator = true;
+    //player2RectangleIndicator = true;
   }
   
-  println("### ### Rectangle boundaries for player " + player + ": x1 = " + x1 + ", x2 = " + x2 + " y1 = " + y1 + ", y2 = " + y2);
+  //println("### ### Rectangle boundaries for player " + player + ": x1 = " + x1 + ", x2 = " + x2 + " y1 = " + y1 + ", y2 = " + y2);
 }
 
 void getRemainingNotes(OscMessage theOscMessage) {
@@ -447,7 +459,7 @@ void getTime(OscMessage theOscMessage) {
   time = int(t * screen_width);
   timeIndicator = true;
   
-  println("### ### Time: " + t);
+  //println("### ### Time: " + t);
 }
 
 void getRemainingPatterns(OscMessage theOscMessage) {
@@ -457,5 +469,33 @@ void getRemainingPatterns(OscMessage theOscMessage) {
   remainingPatterns = n;
   remainingPatternsIndicator = true;
   
-  println("### ### Remaining patterns: " + remainingPatterns);
+  //println("### ### Remaining patterns: " + remainingPatterns);
+}
+
+void getRectanglesToDisplay(OscMessage theOscMessage) {
+  // parse theOscMessage and extract the values from the osc message arguments.
+  int player = theOscMessage.get(0).intValue();
+  int io = theOscMessage.get(1).intValue();
+  
+  // First player
+  if (player == 0) {
+    if (io == 1) {
+      player1RectangleIndicator = true;
+    }
+    else {
+      player1RectangleIndicator = false;
+    }
+    
+  }
+  // Second player
+  else if (player == 1) {
+    if (io == 1) {
+      player2RectangleIndicator = true;
+    }
+    else {
+      player2RectangleIndicator = false;
+    }
+  }
+  
+  println("### ### Display rectangle " + player + ": " + io);
 }
