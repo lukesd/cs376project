@@ -4,10 +4,9 @@
 "../logs/out" => string base_filename;                    // default file name
 if( me.args() > 0 ) me.arg(0) => base_filename;   // look at command line for new file name
 
-// filenames for all outputs
-string file_names[3];
-
+string file_names[4];
 FileIO fout[3];
+WvOut wav_out; // for recording audio out
 
 // open files for writing
 0 => int g_file_num;
@@ -17,6 +16,7 @@ fun void openFiles()
     base_filename + "_plyr1_" + num + ".txt" => file_names[0];
     base_filename + "_plyr2_" + num + ".txt" => file_names[1];
     base_filename + "_bnds_" + num + ".txt" => file_names[2];
+    base_filename + "_audio_" + num + ".wav" => file_names[3];
     for (0 => int i; i < 3; i++) {
         fout[i].open( file_names[i], FileIO.WRITE );
         if( !fout[i].good() ) {
@@ -24,6 +24,10 @@ fun void openFiles()
             me.exit();
         }
     }
+    
+    file_names[3] => wav_out.wavFilename;
+    dac => wav_out => blackhole;
+    
     g_file_num++;
 }
 
@@ -32,6 +36,8 @@ fun void closeFiles()
     for (0 => int i; i < 3; i++) {
         fout[i].close();
     }
+    wav_out.closeFile(file_names[3]);
+    dac =< wav_out =< blackhole;
 }
 
 
@@ -163,7 +169,11 @@ fun void sendBoundsToProcc(int player)
 
 // turn off all extra display elements
 fun void sendAllBoundsOff()
-{    
+{   
+    // set squares to off
+    0 => g_square_on[0];
+    0 => g_square_on[1];
+    
     // set number of notes left and send to procc
     osc_proc_out.startMsg("/notes_remaining", "i i ");
     0 => osc_proc_out.addInt;
@@ -231,11 +241,13 @@ fun void startStopSequencer()
         closeFiles();
         sendAllBoundsOff();
     }
-    else {
+    else {             // start the sequencer
         openFiles();
-        if (!g_send_bounds )
+        if (!g_send_bounds ) {
             sendAllBoundsOff();
-        1 => g_seq_on;     // start the sequencer
+            [64, 64] @=> g_notes_left;
+        }
+        1 => g_seq_on;     
         0 => g_tick_ct;
         0 => g_current_prg;
         -1 => g_chord_ct;
@@ -529,11 +541,9 @@ fun void triggerSynth( int player )
         env[player].keyOn();
         //que[player].addEvent( now );  // for calculating note density
         
-        // update count
-        g_notes_left[player]--;
-        
-        // send osc msg to procc
+        // update count and send msg to procc
         if (g_send_bounds) {
+            g_notes_left[player]--;
             osc_proc_out.startMsg("/notes_remaining", "i i ");
             player => osc_proc_out.addInt;
             g_notes_left[player] => osc_proc_out.addInt;
@@ -764,7 +774,7 @@ fun void keyboardListener()
                     startStopSequencer();
                 }
                 else {
-                    <<< "unknown key ", msgKbd.which >>>;
+                    //<<< "unknown key ", msgKbd.which >>>;
                 }
             }
         }
