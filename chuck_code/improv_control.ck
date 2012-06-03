@@ -184,10 +184,10 @@ fun void sendAllBoundsOff()
        
     // send squares off
     osc_proc_out.startMsg("/rect_on", "i i");
-    0=> osc_proc_out.addInt;
+    0 => osc_proc_out.addInt;
     0 => osc_proc_out.addInt;
     osc_proc_out.startMsg("/rect_on", "i i");
-    1=> osc_proc_out.addInt;
+    1 => osc_proc_out.addInt;
     0 => osc_proc_out.addInt;
 }
 
@@ -421,7 +421,7 @@ wet_gain => rvrb => dac;
 0.15 => wet_gain.gain;
 0.8 => panr[0].pan;
 -0.8 => panr[1].pan;
-0.7  => osc2.gain;
+0.5  => osc2.gain;
 for (0 => int i; i < g_num_players; i++) {
     3 => ring[i].op;
     env[i].keyOff();
@@ -772,6 +772,9 @@ fun void keyboardListener()
                 else if( msgKbd.which == 31) {    // '2' key
                     0 => g_send_bounds;
                     startStopSequencer();
+                }
+                else if( msgKbd.which == 32) {    // '3' key
+                    sendAllBoundsOff();
                 }
                 else {
                     //<<< "unknown key ", msgKbd.which >>>;
