@@ -205,10 +205,10 @@ SndBuf cr_buf => Gain cr_gain => dac; // crash
 "kick.wav"   => kk_buf.read;
 "snare.wav"  => sn_buf.read;
 "crash.wav" => cr_buf.read;
-0.5 => hh_buf.gain;
-0.3 => kk_buf.gain;
-0.5 => sn_buf.gain;
-0.5 => cr_buf.gain;
+Std.dbtorms(100 - 7) => hh_buf.gain;
+Std.dbtorms(100 - 12) => kk_buf.gain;
+Std.dbtorms(100 - 9) => sn_buf.gain;
+Std.dbtorms(100 - 7) => cr_buf.gain;
 
 hh_buf.samples() => hh_buf.pos;
 kk_buf.samples() => kk_buf.pos;
@@ -227,7 +227,7 @@ SndBuf chords[g_num_chords];
 "Gm-2.wav" => chords[4].read;
 for (0 => int i; i < g_num_chords; i++ ) {
     chords[i].samples() => chords[i].pos;
-    0.05 => chords[i].gain;
+    Std.dbtorms(100 - 28) => chords[i].gain;
     chords[i] => dac;
 }
 
@@ -425,7 +425,7 @@ wet_gain => rvrb => dac;
 0.1 => wet_gain.gain;
 0.9 => panr[0].pan;
 -0.9 => panr[1].pan;
-0.35  => osc2.gain;
+Std.dbtorms(100 - 11)  => osc2.gain;
 for (0 => int i; i < g_num_players; i++) {
     3 => ring[i].op;
     env[i].keyOff();
@@ -473,6 +473,9 @@ fun void playSynth(int player, float parmX, float parmY)
         hi_base + 3000.0*(parmX-thr1)/(1.0 - thr1) => hp_flt[player].freq;
         lo_base + 10000.0 => lp_flt[player].freq; 
     }
+    
+    // equalize for gain
+    Std.dbtorms( 95*(1-parmX) + 100*parmX) => lp_flt[player].gain;
     
     // calc noise amount depending on whether inside or outside squares, and by how much
     [0, 0] @=> int outside[];                 // 1 if outside square
