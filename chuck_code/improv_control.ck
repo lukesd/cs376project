@@ -205,6 +205,10 @@ SndBuf cr_buf => Gain cr_gain => dac; // crash
 "kick.wav"   => kk_buf.read;
 "snare.wav"  => sn_buf.read;
 "crash.wav" => cr_buf.read;
+0.5 => hh_buf.gain;
+0.3 => kk_buf.gain;
+0.5 => sn_buf.gain;
+0.5 => cr_buf.gain;
 
 hh_buf.samples() => hh_buf.pos;
 kk_buf.samples() => kk_buf.pos;
@@ -223,7 +227,7 @@ SndBuf chords[g_num_chords];
 "Gm-2.wav" => chords[4].read;
 for (0 => int i; i < g_num_chords; i++ ) {
     chords[i].samples() => chords[i].pos;
-    0.08 => chords[i].gain;
+    0.05 => chords[i].gain;
     chords[i] => dac;
 }
 
@@ -418,10 +422,10 @@ env[0] => Gain wet_gain;
 env[1] => wet_gain;
 wet_gain => rvrb => dac;
 // set params: 
-0.15 => wet_gain.gain;
-0.8 => panr[0].pan;
--0.8 => panr[1].pan;
-0.5  => osc2.gain;
+0.1 => wet_gain.gain;
+0.9 => panr[0].pan;
+-0.9 => panr[1].pan;
+0.35  => osc2.gain;
 for (0 => int i; i < g_num_players; i++) {
     3 => ring[i].op;
     env[i].keyOff();
