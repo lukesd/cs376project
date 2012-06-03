@@ -18,18 +18,20 @@ function loss($score, $expected, $k = 24) {
 // Get the real IP address of the client
 function getRealIpAddr()
 {
-    if (!empty($_SERVER['HTTP_CLIENT_IP']))   //check ip from share internet
-    {
+    //Test if it is a shared client
+    if (!empty($_SERVER['HTTP_CLIENT_IP'])) {
       $ip = $_SERVER['HTTP_CLIENT_IP'];
+    //Is it a proxy address
     }
-    elseif (!empty($_SERVER['HTTP_X_FORWARDED_FOR']))   //to check ip is pass from proxy
-    {
+    elseif (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
       $ip = $_SERVER['HTTP_X_FORWARDED_FOR'];
     }
-    else
-    {
+    else {
       $ip = $_SERVER['REMOTE_ADDR'];
     }
+    //The value of $ip at this point would look something like: "192.0.34.166"
+    //$ip = ip2long($ip);
+    //The $ip would now look something like: 1073732954
     return $ip;
 }
 

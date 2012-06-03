@@ -20,7 +20,7 @@
 			`losses` int(10) unsigned NOT NULL default '0',
 			`group` int(10 ) unsigned NOT NULL,
 			`session` int(10 ) unsigned NOT NULL,
-			PRIMARY KEY  (`image_id`)
+			PRIMARY KEY  (`music_id`)
 		) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
 4) place all the musics in the /musics/ folder.
