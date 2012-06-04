@@ -557,7 +557,7 @@ fun void triggerSynth( int player )
         }
         
         // write to text file
-        writeNote(player, g_synth_parms[player][0], g_synth_parms[player][0]);
+        writeNote(player, g_synth_parms[player][0], g_synth_parms[player][1]);
          
         // turn off note
         50::ms => now;
