@@ -425,7 +425,7 @@ wet_gain => rvrb => dac;
 0.1 => wet_gain.gain;
 0.9 => panr[0].pan;
 -0.9 => panr[1].pan;
-Std.dbtorms(100 - 11)  => osc2.gain;
+Std.dbtorms(100 - 10)  => osc2.gain;
 for (0 => int i; i < g_num_players; i++) {
     3 => ring[i].op;
     env[i].keyOff();
