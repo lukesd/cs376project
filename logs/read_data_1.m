@@ -1,19 +1,161 @@
+% read_data_1.m
+% reads player data and calculates various statistics between the four
+% groups
 
+% load up player data from all four cases: group A, first and second
+% performances, and group B, first and second performances
+dirs = {'groupA_txt/first/',
+    'groupA_txt/second/'
+    'groupB_txt/first/'
+    'groupB_txt/second/'
+    };
+num_groups = length(dirs);
 
-%file_name = 'group1_B_plyr1_0.txt';
-% x = dlmread(file_name);   
-% x(:,1) = note time
-% x(:,2) = note x (timbre)
-% x(:,3) = note y (pitch)
-
-dir = 'groupA_txt/first/';
-files = getFileNames(dir, 'txt');
-
-for i=1:length(files)
-    file_name = strcat(dir,files(i));
-    x = dlmread(file_name);
-    X{i} = x;
+%% load files
+X = {}
+for i=1:num_groups
+    disp(['reading files for dir ' dirs{i}]);
+    inFileList = getFileNames(dirs{i}, 'txt');
+    num_files = length(inFileList);
+    X{i}.num_files = num_files;
+    for j = 1:num_files
+        file_name = [dirs{i} inFileList{j}];
+        x = dlmread(file_name);
+        X{i}.data{j} = x;
+        X{i}.name{j} = inFileList{j};
+       % X.data{i,j} = x;
+    end
 end
+
+%% calc features of players independantly
+% calc histogram of internote time differences for all groups
+
+for i=1:num_groups
+    X{i}.time_diffs = [];
+    X{i}.loc_diffs = [];
+    for j = 1:X{i}.num_files
+        
+        % calc time differences
+        temp = diff(X{i}.data{j}(:,1));
+        X{i}.time_diffs = [X{i}.time_diffs; temp];
+        
+        % if distance data is not bad, calc euclidean distance between
+        % successive notes
+        X{i}.has_loc{j} = 0;
+        if sum(X{i}.data{j}(:,2) - X{i}.data{j}(:,3)) ~= 0
+            disp([X{i}.name{j} 'has good location data']);
+            X{i}.has_loc{j} = 1;
+            % X{i}.loc_diffs{j} = [];
+            temp = diff(X{i}.data{j}(:,2:3));
+            for k=1:length(temp)
+                X{i}.loc_diffs = [X{i}.loc_diffs; norm(temp(k,:))];
+            end
+            
+        end
+    end
+end
+
+%% plotting note interval histograms
+figure;
+% subplot(2,2,1); hist(X{1}.time_diffs); xlabel('time between notes'); title('Group A - 1st duet');
+% subplot(2,2,2); hist(X{2}.time_diffs); xlabel('time between notes'); title('Group A - 2nd duet');
+% subplot(2,2,3); hist(X{3}.time_diffs); xlabel('time between notes'); title('Group B - 1st duet');
+% subplot(2,2,4); hist(X{4}.time_diffs); xlabel('time between notes'); title('Group B - 2nd duet');
+
+subplot(2,2,1); hist(log(X{1}.time_diffs)); xlabel('time between notes'); title('Group A - 1st duet');
+subplot(2,2,2); hist(log(X{2}.time_diffs)); xlabel('time between notes'); title('Group A - 2nd duet');
+subplot(2,2,3); hist(log(X{3}.time_diffs)); xlabel('time between notes'); title('Group B - 1st duet');
+subplot(2,2,4); hist(log(X{4}.time_diffs)); xlabel('time between notes'); title('Group B - 2nd duet');
+
+
+%% plotting note distance histograms
+figure;
+subplot(2,2,1); hist(X{1}.loc_diffs); xlabel('dist between notes'); title('Group A - 1st duet');
+subplot(2,2,2); hist(X{2}.loc_diffs); xlabel('dist between notes'); title('Group A - 2nd duet');
+subplot(2,2,3); hist(X{3}.loc_diffs); xlabel('dist between notes'); title('Group B - 1st duet');
+subplot(2,2,4); hist(X{4}.loc_diffs); xlabel('dist between notes'); title('Group B - 2nd duet');
+
+
+%% calc features between players of the same trial
+
+pairs{1} = [1 2; 3 4; 5 6; 7 8];
+pairs{2} = [1 2; 3 4; 5 6; 7 8];
+pairs{3} = [1 2; 3 4; 5 6; 7 8];
+pairs{4} = [1 2; 3 4; 5 6; 7 8];
+%%
+max_notes = 16*4*8;  
+
+for i=1:num_groups
+    X{i}.percent_on = [];
+    X{i}.percent_off = [];
+    X{i}.percent_one = [];
+    % get two players to compare
+    for j=1:length(pairs{i})
+        plyr1 = X{i}.data{ pairs{i}(j,1) };
+        plyr2 = X{i}.data{ pairs{i}(j,2) };
+        
+        % how many people are playing at each time period?
+        temp = zeros(max_notes,1);
+        temp(plyr1(:,1)) = temp(plyr1(:,1)) + ones(length(plyr1),1);
+        temp(plyr2(:,1)) = temp(plyr2(:,1)) + ones(length(plyr2),1);
+        
+        % calculate the total notes played
+        X{i}.percent_on(j) = sum(temp)/(2*max_notes);
+        
+        % calculate percent of time that no one is playing
+        X{i}.percent_off(j) = sum(temp == 0)/max_notes;
+        
+        % calculate percent of time that only 1 is playing vs 2
+        X{i}.percent_one(j) = sum(temp == 1)/(max_notes - sum(temp == 0));        
+    end
+%    X{i}.percent_on_m = mean( X{i}.percent_on );
+%    X{i}.percent_one_m = mean( X{i}.percent_one );
+end
+
+%% plotting
+figure;
+for i=1:num_groups
+    means_on(i) = mean( X{i}.percent_on );
+    means_off(i) = mean( X{i}.percent_off );
+    means_one(i) = mean( X{i}.percent_one );
+    std_on(i) = std( X{i}.percent_on );
+    std_off(i) = std( X{i}.percent_off );
+    std_one(i) = std( X{i}.percent_one );
+end
+subplot(311); bar(means_on); title('percent of total possible notes played');
+subplot(312); bar(means_off); title('percent time neither is playing');
+subplot(313); bar(means_one); title('percent time only one is playing');
+
+figure;
+subplot(311); barwitherr(means_on, std_on); title('percent of total possible notes played');
+subplot(312); barwitherr(means_off, std_off); title('percent time no one is playing');
+subplot(313); barwitherr(means_one, std_one); title('percent time only one is playing');
+
+%% figure for note statistics
+figure;
+% temp_m = [means_on' means_off' means_one'];
+% temp_s = [std_on' std_off' std_one'];
+temp_m = [means_on' means_one'];
+temp_s = [std_on' std_one'];
+barwitherr(temp_s, temp_m); colormap(cool);
+legend('total possible notes played', 'notes w single player / notes where both play');
+ylabel('percent');
+set(gca,'XTickLabel',{'Ctrl Duet 1', 'Ctrl Duet 2', 'Expr Duet 1', 'Expr Duet 1'})
+
+% subplot(211); barwitherr(std_on(1:2), means_on(1:2),'c'); ylim([0 1]);
+% subplot(212); barwitherr(std_on(3:4), means_on(3:4),'c'); ylim([0 1]);
+
+
+% [H,p] = ttest(X{2}.percent_on, X{4}.percent_on)
+% [H,p] = ttest(X{2}.percent_one, X{4}.percent_one)
+
+%% figure for music mash results:
+temp_m = [1492 1539.33];
+temp_s = [12.192 20.526];
+barwitherr(temp_s, temp_m); ylim([1000 1500]);
+set(gca,'XTickLabel',{'Ctrl Duet 1', 'Expr Duet 1'})
+ylabel('mean musical score');
+
 
 
 
