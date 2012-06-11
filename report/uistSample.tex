@@ -46,7 +46,7 @@
 \maketitle
 
 \abstract
-We investigate the effects of adding structural guidelines to musical interactions for novices. We developed a simple instrument controlled by the location of a single touch on an iOS device, allowing users to control three musical parameters: pitch, timbre, and note density.  Two users can play separate instances of the instrument simultaneously, and their actions are shared on a public display.  We conducted an experiment where pairs of participants perform duets under two interaction conditions: \emph{unstructured} and \emph{structured}.  In the unstructured case users are free to play what they like, while in the structured case we add time-varying constraints to the musical parameters, which are indicated on the display. A control group played two duets without structure, while an experimental group played one duet with structure, and a second duet without. By crowd-sourcing the ranking of recordings of duets we find that for the first duet, structure leads to musically better results. We measured the quality of participants' experience in a post experiment survey, and found that the experimental group had a better experience during the second unstructured duet.
+We investigate the effects of adding structural guidelines to musical interactions for novices. We developed a simple instrument controlled by the location of a single touch on an iOS device, allowing control of three musical parameters: pitch, timbre, and note density.  Two users can play separate instances of the instrument simultaneously, and their actions are shared on a public display.  We conducted an experiment where pairs of participants perform duets under two interaction conditions: \emph{unstructured} and \emph{structured}.  In the unstructured case users are free to play what they like, while in the structured case we add time-varying constraints to the musical parameters, which are indicated on the display. A control group played two duets without structure, while an experimental group played one duet with structure and a second without. By crowd-sourcing the ranking of recordings of the duets we find that for the first duet, structure leads to musically better results. We measured the quality of participants' experience in a post experiment survey, and found that the experimental group had a better experience during the unstructured duet.
 
 \classification{H5.2 [Information interfaces and presentation]:
 User Interfaces. - Graphical user interfaces.}
@@ -63,9 +63,9 @@ User Interfaces. - Graphical user interfaces.}
 
 
 \section{INTRODUCTION}
-Creating music with others is an enjoyable experience for those who know how to make music. However becoming musically proficient requires years of studying an instrument as well as the techniques and idioms of a specific musical tradition. With computer-based instruments the means of input is decoupled from the sound production, allowing designers to create instruments of varying complexity, including instruments which are simple enough to be quickly learned and played by anyone, regardless of musical training.
+Creating music with others is an enjoyable experience for those who know how to make music. However, becoming musically proficient requires years of studying an instrument as well as the techniques and idioms of a specific musical tradition. With computer-based instruments the means of input is decoupled from the sound production, allowing designers to create instruments of varying complexity, including instruments which are simple enough to be quickly learned and played by anyone, regardless of musical training.
 
-We want to better understand what aspects of a new musical interaction make it attractive and fun for novices.  It is useful to think of musical interactions as being made up of two parts:  the \textit{instrument}, which is the means by which the player controls sound, and the \textit{interaction}, which includes the actions that a player takes over time and the interactions between players.  For non-musically trained users a simple instrument may not be enough. Being unfamiliar with possible musical goals or techniques for achieving them, they may still not know what to \textit{do} with the instrument.
+We want to better understand what aspects of a new musical interaction make it attractive and fun for novices.  It is useful to think of musical interactions as being made up of two parts:  the \textit{instrument}, which is the means by which the player controls sound, and the \textit{interaction}, which includes the actions that a player may take over time and how these relate to other players.  For non-musically trained users a simple instrument may not be enough. Being unfamiliar with possible musical goals or techniques for achieving them, they may still not know what to \textit{do} with the instrument.
 
 We hypothesize that adding structure, such as a game-like interaction which directs users within a musical parameters space, may provide a focus and context that helps players feel less inhibited and more expressive.   We also predict that adding structure to musical interactions will lead to results which are more \textit{musical}.
 
@@ -112,7 +112,7 @@ A note consists of a short synthetic tone with a sharp attack followed by a quic
 
 \subsubsection{The Interaction}
 
-The musical interaction is designed for two players.  Each plays their own instrument with their own iPhone controller, and each instrument has a slightly different tone (a sawtooth wave for one and a square wave for the other.)  There is a shared public display where the players, as well as any bystanders, can see both players' actions.  The display appears as a single large rectangle mirroring the touch area on the iPhone controller.  Notes played on either instrument appear as colored circles in the rectangle with a different color for each player, as you can see on figure~\ref{screenshot-processing}.
+The musical interaction is designed for two players.  Each plays their own instrument with their own iPhone controller, and each instrument has a slightly different tone (a sawtooth wave for one and a square wave for the other.)  There is a shared public display where the players, as well as any bystanders, can see both players' actions.  The display appears as a single large rectangle mirroring the touch area on the iPhone controller.  Notes played on either instrument appear as colored circles in the rectangle with a different color for each player (see figure~\ref{screenshot-processing}.)
 
 \begin{figure}[tb]
 \includegraphics[width=\columnwidth]{screenshot-processing.png}
@@ -122,9 +122,9 @@ The musical interaction is designed for two players.  Each plays their own instr
 
 \subsubsection{Playing a Duet}
 
-When users play a duet there is a background musical accompaniment consisting of chords and a drum pattern.  The duet consists of 8 ``patterns'' of four measures each.  At a tempo of 100 beats per minutes a duet lasts one minute and twenty seconds.  A bar at the top of the display shows time progressing through each pattern, as well as the number of patterns left in the song.  
+When users play a duet there is a background musical accompaniment of chords and a drum pattern.  The duet consists of 8 ``patterns'' of four measures each.  At a tempo of 100 beats per minutes a duet lasts one minute and twenty seconds.  A bar at the top of the display shows time progressing through each pattern, as well as the number of patterns left in the song.  
 
-The notes that the instruments play are constrained to a scale which sounds good with the chords of the duet.  Also the timing of notes are constrained to fall on 16th note intervals of the accompaniment's rhythm.  As a result the music performed will always sounds musically consistent.
+The notes that the instruments can play are constrained to a scale which sounds good with the chords of the duet.  Also the timing of notes are constrained to fall on 16th note intervals of the accompaniment's rhythm.  As a result the music performed will always sounds musically consistent.
 
 \subsubsection{Adding Constraints to Create Structure}
 
