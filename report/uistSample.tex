@@ -3,6 +3,7 @@
 \usepackage{times}
 \usepackage{uist}
 \usepackage{tabularx}
+\usepackage{graphicx}
 
 \begin{document}
 
@@ -98,25 +99,25 @@ We will first describe the instrument, then the interactions, and lastly the par
 
 \subsubsection{The Instrument}
 
-The instrument we created is controlled by an iOS app running on an iPhone or iPod Touch. The app has a single 2D touch area, and users can play a note by touching this area. When the touch location changes a new note is played, allowing strings of notes to be played by touching and dragging.  The interface recognizes only one touch at a time. [maybe pic of iPhone interface here.]
+The instrument we created is controlled by an iOS app running on an iPhone or iPod Touch. The app has a single 2D touch area, and users can play a note by touching this area. When the touch location changes a new note is played, allowing strings of notes to be played by touching and dragging.  The interface recognizes only one touch at a time. [[ADD FIGURE] maybe pic of iPhone interface here.]
 
 A note consists of a short synthetic tone with a sharp attack followed by a quick decay.  The vertical location of the player’s touch controls the pitch of the note (higher placement leads to higher pitch and vice versa), and the horizontal location controls the timbre by changing the balance of high and low frequencies.
 
 \subsubsection{The Interaction}
 
-The musical interaction is designed for two players.  Each plays their own instrument with a their own iPhone controller, and each instrument has a slightly different tone (a sawtooth wave for one player and a square wave for the other.)  There is a shared public display where players as well as any bystanders can see their own actions as well as those of their partner.  The display appears as a single large rectangle mirroring the touch area on the iPhone controller.  Notes played on either instrument appear as colored circles in the rectangle, with a different color for each player (see FIG X.a)
+The musical interaction is designed for two players.  Each plays their own instrument with a their own iPhone controller, and each instrument has a slightly different tone (a sawtooth wave for one player and a square wave for the other.)  There is a shared public display where players as well as any bystanders can see their own actions as well as those of their partner.  The display appears as a single large rectangle mirroring the touch area on the iPhone controller.  Notes played on either instrument appear as colored circles in the rectangle, with a different color for each player [ADD FIGURE]
 
 \subsubsection{Playing a Duet}
 
-When users play a duet there is a background musical accompaniment consisting of some chords and a drum pattern.  The duet consists of 8 “patterns” of four measures each.  At a tempo of 100 beats per minutes a duet lasts about a minute and twenty seconds.  A bar at the top of the display shows time progressing through each pattern, as well as the number of patterns left in the song.  
+When users play a duet there is a background musical accompaniment consisting of some chords and a drum pattern.  The duet consists of 8 ``patterns'' of four measures each.  At a tempo of 100 beats per minutes a duet lasts about a minute and twenty seconds.  A bar at the top of the display shows time progressing through each pattern, as well as the number of patterns left in the song.  
 
 The notes that the instruments play are constrained to a scale which sounds good with the chords of the duet.  Also the timing of notes are constrained to always fall on 16th note intervals of the duet’s rhythm.  As a result the music performed will always sounds musically consistent.
 
 \subsubsection{Adding Constraints to Create Structure}
 
-The instrument can be thought of as enabling three basic musical dimensions: note pitch (controlled by vertical location), note timbre (horizontal location), and the density of notes (a function of how frequently notes are played.)  We create structure by directing the players into different areas of this musical space at different times. During structured duets blue squares appear on the display (see figure X.b).  The players are encouraged to play within these squares, and if they play outside of them their sounds becomes distorted.  The boundaries of the structure squares change for each 4-bar “pattern” in the music.  This serves to constrain the first two musical dimensions.
+The instrument can be thought of as enabling three basic musical dimensions: note pitch (controlled by vertical location), note timbre (horizontal location), and the density of notes (a function of how frequently notes are played.)  We create structure by directing the players into different areas of this musical space at different times. During structured duets blue squares appear on the display [ADD FIGURE]).  The players are encouraged to play within these squares, and if they play outside of them their sounds becomes distorted.  The boundaries of the structure squares change for each 4-bar “pattern” in the music.  This serves to constrain the first two musical dimensions.
 
-We control the third dimension, note density, by constraining the number of notes that a player can play during each pattern.  Colored bars on either side of the screen indicate the number of notes left to each player for the current pattern. (see figure X.b)
+We control the third dimension, note density, by constraining the number of notes that a player can play during each pattern.  Colored bars on either side of the screen indicate the number of notes left to each player for the current pattern. [ADD FIGURE]
 
 \subsubsection{Implementation}
 
@@ -131,13 +132,17 @@ The experiment proceeded as follows for each pair of participants: The instrumen
  
 Following the first duet there was a brief pause, and the control group was given brief verbal suggestions for ways to structure their interactions.  The suggestions were equivalent to what the experimental group might infer from the constraints of the structured interaction.
 
-Participants then performed a second duet together.  The musical accompaniment for the second duet was the same as for the first.  In the second duet both the control and experimental groups were given the unstructured interaction.  [SEE FIGURE Y]
+Participants then performed a second duet together.  The musical accompaniment for the second duet was the same as for the first.  In the second duet both the control and experimental groups were given the unstructured interaction. The experiment is represented on figure~\cite{experiment}.
 
 This design allows as to compare the duets between and within groups.  Given our hypotheses, we expected to find that in the first duet the experimental group was more enjoyable, due to the context provided by the structure, and that they created better music than the control group. We expected that within the control group the second duet would be less enjoyable due to the loss of context when the structure was removed.  
 
-We also expected that in the second duet the experimental group would perform musically as well or better than the control group, due to inferring principles of musical interaction from the structured interaction.  (maybe?)
+We also expected that in the second duet the experimental group would perform musically as well or better than the control group, due to inferring principles of musical interaction from the structured interaction.
 
-[ADD FIGURE OF EXPERIMENT]
+\begin{figure}[tb]
+\includegraphics[width=\columnwidth]{exp.png}
+\caption{The experiment. The control group 1) has a short period of training, 2) plays a duet without structure, 3) is given verbal instructions, 4) plays a second duet without structure. The experimental group 1) has a short period of training, 2) plays a duet with structure, 3) has a short pause, 4) plays a second duet without structure.}
+\label{experiment}
+\end{figure}
 
 
 \section{RESULTS}
@@ -170,9 +175,7 @@ Consequently, we launched the MusicMash website that asks the users to compare t
 
 In 48 hours, we gathered 474 evaluations, coming from 114 different IP addresses. Table~\ref{musicmash-results} shows the ranking among the songs in duet 1. With a standard deviation of $44.05$ and a mean of $1500$ in the Elo scores of these songs, it means that the music produced by group 3 is almost two standard deviations below the mean ($\Delta = 86$). For that reason, we think we can reasonably assume that this data point is an outlier, and remove it from our dataset.
 
-Figure [REF, INCLUDE THE GRAPH] shows the average Elo score of the music performed with structure, and the music performed without structure. The average score of the music performed with structure is significantly greater than the score of the music performed without structure ($t(6) = 3.55$, $p = 0.006$). Put differently, adding structure to the musical interactions led to better music.
-
-[INCLUDE SCREEN OF THE WEBSITE IF WE CAN]
+Figure~\ref{survey-results} shows the average Elo score of the music performed with structure, and the music performed without structure. The average score of the music performed with structure is significantly greater than the score of the music performed without structure ($t(6) = 3.55$, $p = 0.006$). Put differently, adding structure to the musical interactions led to better music.
 
 \begin{table}[tb]
 \begin{center}
@@ -194,17 +197,21 @@ Experimental & 1414 \\
 \end{table}
 
 \begin{figure}[tb]
-\includegraphics[width=\columnwidth]{note-stats.png}
-\caption{A figure caption.  It is set in 9 point Helvetica type, with a
-0.5 cm wider margin on both left and right sides.} 
-\label{fig-example}
+\includegraphics[width=\columnwidth]{music-scores-bar-graph.png}
+\caption{Note repartition in the different duets.} 
+\label{survey-results}
 \end{figure}
 
 
 \subsection{Analyzing Notes}
 
-We recorded all note data during the duet performances, and calculated three metrics to quantify the musical parameter of note density. The percent of notes played tells us how many total notes were played. The percent of time with no notes tells us how often neither player was playing, \emph{i.e.} how much space the players left. And the percent of notes with only one player tells is the proportion of time when a note was played that only one player was playing at that time, which tells us how much the players took turns. Each of these metric has an obvious trend when we plot from the duets from the Control group to those of the Experiment group.  The first increased, while the second two decrease.  A significant difference between these results appears when we compare the second duet of the control with that of the experiment. The control group played fewer notes ($p = 0.048$) and had higher proportion of single notes, \emph{i.e.} they exhibited more turn taking ($p = 0.035$). In some sense this suggests that the control group played better music during the second duet. 
+We recorded all note data during the duet performances, and calculated three metrics to quantify the musical parameter of note density. The percent of notes played tells us how many total notes were played. The percent of time with no notes tells us how often neither player was playing, \emph{i.e.} how much space the players left. And the percent of notes with only one player tells is the proportion of time when a note was played that only one player was playing at that time, which tells us how much the players took turns. Each of these metric has an obvious trend when we plot from the duets from the Control group to those of the Experiment group, as we can see on figure~\ref{note-stats}. The first increased, while the second two decrease. A significant difference between these results appears when we compare the second duet of the control with that of the experiment. The control group played fewer notes ($p = 0.048$) and had higher proportion of single notes, \emph{i.e.} they exhibited more turn taking ($p = 0.035$). In some sense this suggests that the control group played better music during the second duet. 
 
+\begin{figure}[tb]
+\includegraphics[width=\columnwidth]{note-stats.png}
+\caption{Note repartition in the different duets.} 
+\label{note-stats}
+\end{figure}
 
 
 
@@ -226,9 +233,11 @@ Despite any differences between the interaction types, almost all participants r
 
 \section{FUTURE WORK}
 
+The first 
+
 The survey result is interesting. We have considered all the duets as real performances. However, people from the experimental group reported that they enjoyed the experience significantly better in the second duet (unstructured) than in the first (structured), whereas there was no significant difference in the control group (where both duets are unstructured). If the level of enjoyment for the first duet is the same in both groups (which the results of our survey seems to correlate), it may be the case that structure is an excellent training for people. It would be interesting to study if people enjoy more their music after a training period with structure rather than after a training period without structure.
 
-Similarly, it would be interesting to study if the structure in the first duet actually taught some musical principles (consciously or subconsciously) to the novices. Such a study could consist in measuring the behavioral change 
+Similarly, it would be interesting to study if the structure in the first duet actually teaches musical principles (consciously or subconsciously) to the novices. Such a study could consist in measuring the behavioral change between interactions with structure an
 
 
 
@@ -256,7 +265,7 @@ It is important that you write for the UIST audience.  Please read previous year
 {\em Proceedings} to understand the writing style and conventions that successful 
 authors have used.  It is particularly important that you state clearly what you 
 have done, not merely what you plan to do, and explain how your work is
-different from previously published work, i.e., what is the unique contribution
+different from previously published work, \emph{i.e.}, what is the unique contribution
 that your work makes to the field?  Please consider what the reader will learn
 from your submission, and how they will find your work useful.  If you write with
 these questions in mind, your work is more likely to be successful, both in being
@@ -285,21 +294,6 @@ Pittsburgh, 2009.
 
 \bibitem{survey} Blaine, T., Fels, S. Collaborative Musical Experiences for Novices.
 Journal of New Music Research, 32:4, 411-428, 2003.
-
-\bibitem{badenov91}  Badenov, B. Effects of prolonged use of WIMP user
-interfaces on Alces americana and Glaucomys volans.
-In {\em Proceedings of UIST '87}
-(February 30--April 1, Graceland, TN), ACM, NY, 1987, pp. 231--240.
-
-\bibitem{henry-etal92} Henry, T.R., Yeatts, A.K., Hudson, S.E., Myers, B.A.,
-and Feiner, S.K.  A nose gesture interface device: Extending virtual realities.
-{\em Presence 1}, 2 (Spring 1992), 258--261.
-
-\bibitem{GenderNeutral} Schwartz, M. Guidelines for Bias-Free Writing.
-Indiana University Press, Bloomington, IN, USA, 1995.
-
-\bibitem{zaranka81} Zaranka, W., Ed. {\em The Brand-X Anthology of Poetry:  A
-Parody Anthology.}  Apple-wood Books, Cambridge, MA, 1981.
 \end{thebibliography}
 
 \end{document}
