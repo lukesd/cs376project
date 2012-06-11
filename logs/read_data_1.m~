@@ -122,9 +122,9 @@ for i=1:num_groups
     std_off(i) = std( X{i}.percent_off );
     std_one(i) = std( X{i}.percent_one );
 end
-subplot(311); bar(means_on); title('percent of total possible notes played');
-subplot(312); bar(means_off); title('percent time neither is playing');
-subplot(313); bar(means_one); title('percent time only one is playing');
+% subplot(311); bar(means_on); title('percent of total possible notes played');
+% subplot(312); bar(means_off); title('percent time neither is playing');
+% subplot(313); bar(means_one); title('percent time only one is playing');
 
 figure;
 subplot(311); barwitherr(means_on, std_on); title('percent of total possible notes played');
@@ -133,14 +133,19 @@ subplot(313); barwitherr(means_one, std_one); title('percent time only one is pl
 
 %% figure for note statistics
 figure;
-% temp_m = [means_on' means_off' means_one'];
-% temp_s = [std_on' std_off' std_one'];
-temp_m = [means_on' means_one'];
-temp_s = [std_on' std_one'];
+% temp_m = 100*[means_off' means_on'  means_one'];
+% temp_s = 100*[std_off' std_on'  std_one'];
+temp_m = 100*[means_on' means_off'   means_one'];
+temp_s = 100*[std_on' std_off'   std_one'];
+% temp_m = [means_on' means_one'];
+% temp_s = [std_on' std_one'];
 barwitherr(temp_s, temp_m); colormap(cool);
-legend('total possible notes played', 'notes w single player / notes where both play');
+%legend('total possible notes played', 'notes w single player / notes where both play');
+%legend('time with no notes', 'notes played','notes with only one player');
+legend( 'notes played','time with no notes','notes with only one player');
 ylabel('percent');
-set(gca,'XTickLabel',{'Ctrl Duet 1', 'Ctrl Duet 2', 'Expr Duet 1', 'Expr Duet 1'})
+% set(gca,'XTickLabel',{'Ctrl Duet 1', 'Ctrl Duet 2', 'Expr Duet 1', 'Expr Duet 1'})
+set(gca,'XTickLabel',{'Control Duet 1', 'Control Duet 2', 'Experiment Duet 1', 'Experiment Duet 1'})
 
 % subplot(211); barwitherr(std_on(1:2), means_on(1:2),'c'); ylim([0 1]);
 % subplot(212); barwitherr(std_on(3:4), means_on(3:4),'c'); ylim([0 1]);
