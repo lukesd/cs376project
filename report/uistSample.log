@@ -1,21 +1,25 @@
-This is pdfTeX, Version 3.1415926-1.40.10 (TeX Live 2009) (format=pdflatex 2009.11.7)  11 JUN 2012 13:54
+This is pdfTeX, Version 3.1415926-2.3-1.40.12 (TeX Live 2011) (format=pdflatex 2011.10.10)  11 JUN 2012 15:57
 entering extended mode
  \write18 enabled.
+ file:line:error style messages enabled.
  %&-line parsing enabled.
 **uistSample.tex
 (./uistSample.tex
 LaTeX2e <2009/09/24>
-Babel <v3.8l> and hyphenation patterns for english, usenglishmax, dumylang, noh
-yphenation, german-x-2009-06-19, ngerman-x-2009-06-19, ancientgreek, ibycus, ar
-abic, basque, bulgarian, catalan, pinyin, coptic, croatian, czech, danish, dutc
-h, esperanto, estonian, farsi, finnish, french, galician, german, ngerman, mono
-greek, greek, hungarian, icelandic, indonesian, interlingua, irish, italian, ku
-rmanji, latin, latvian, lithuanian, mongolian, mongolian2a, bokmal, nynorsk, po
-lish, portuguese, romanian, russian, sanskrit, serbian, slovak, slovenian, span
-ish, swedish, turkish, ukenglish, ukrainian, uppersorbian, welsh, loaded.
-(/usr/local/texlive/2009/texmf-dist/tex/latex/base/article.cls
+Babel <v3.8l> and hyphenation patterns for english, dumylang, nohyphenation, ge
+rman-x-2009-06-19, ngerman-x-2009-06-19, afrikaans, ancientgreek, ibycus, arabi
+c, armenian, basque, bulgarian, catalan, pinyin, coptic, croatian, czech, danis
+h, dutch, ukenglish, usenglishmax, esperanto, estonian, ethiopic, farsi, finnis
+h, french, galician, german, ngerman, swissgerman, monogreek, greek, hungarian,
+ icelandic, assamese, bengali, gujarati, hindi, kannada, malayalam, marathi, or
+iya, panjabi, tamil, telugu, indonesian, interlingua, irish, italian, kurmanji,
+ lao, latin, latvian, lithuanian, mongolian, mongolianlmc, bokmal, nynorsk, pol
+ish, portuguese, romanian, russian, sanskrit, serbian, serbianc, slovak, sloven
+ian, spanish, swedish, turkish, turkmen, ukrainian, uppersorbian, welsh, loaded
+.
+(/usr/local/texlive/2011/texmf-dist/tex/latex/base/article.cls
 Document Class: article 2007/10/19 v1.4h Standard LaTeX document class
-(/usr/local/texlive/2009/texmf-dist/tex/latex/base/size10.clo
+(/usr/local/texlive/2011/texmf-dist/tex/latex/base/size10.clo
 File: size10.clo 2007/10/19 v1.4h Standard LaTeX file (size option)
 )
 \c@part=\count79
@@ -30,7 +34,7 @@ File: size10.clo 2007/10/19 v1.4h Standard LaTeX file (size option)
 \belowcaptionskip=\skip42
 \bibindent=\dimen102
 )
-(/usr/local/texlive/2009/texmf-dist/tex/latex/psnfss/times.sty
+(/usr/local/texlive/2011/texmf-dist/tex/latex/psnfss/times.sty
 Package: times 2005/04/12 PSNFSS-v9.2a (SPQR) 
 ) (./uist.sty
 Style "UIST" <01 August 2005>.
@@ -41,10 +45,10 @@ Style "UIST" <01 August 2005>.
 \acmcopyr=\toks18
 \boilerplate=\toks19
 \copyrightetc=\toks20
-) (/usr/local/texlive/2009/texmf-dist/tex/latex/tools/tabularx.sty
+) (/usr/local/texlive/2011/texmf-dist/tex/latex/tools/tabularx.sty
 Package: tabularx 1999/01/07 v2.07 `tabularx' package (DPC)
 
-(/usr/local/texlive/2009/texmf-dist/tex/latex/tools/array.sty
+(/usr/local/texlive/2011/texmf-dist/tex/latex/tools/array.sty
 Package: array 2008/09/09 v2.4c Tabular extension package (FMi)
 \col@sep=\dimen103
 \extrarowheight=\dimen104
@@ -60,26 +64,33 @@ Package: array 2008/09/09 v2.4c Tabular extension package (FMi)
 \TX@cols=\count87
 \TX@ftn=\toks22
 )
-(/usr/local/texlive/2009/texmf-dist/tex/latex/graphics/graphicx.sty
+(/usr/local/texlive/2011/texmf-dist/tex/latex/graphics/graphicx.sty
 Package: graphicx 1999/02/16 v1.0f Enhanced LaTeX Graphics (DPC,SPQR)
 
-(/usr/local/texlive/2009/texmf-dist/tex/latex/graphics/keyval.sty
+(/usr/local/texlive/2011/texmf-dist/tex/latex/graphics/keyval.sty
 Package: keyval 1999/03/16 v1.13 key=value parser (DPC)
 \KV@toks@=\toks23
 )
-(/usr/local/texlive/2009/texmf-dist/tex/latex/graphics/graphics.sty
+(/usr/local/texlive/2011/texmf-dist/tex/latex/graphics/graphics.sty
 Package: graphics 2009/02/05 v1.0o Standard LaTeX Graphics (DPC,SPQR)
 
-(/usr/local/texlive/2009/texmf-dist/tex/latex/graphics/trig.sty
+(/usr/local/texlive/2011/texmf-dist/tex/latex/graphics/trig.sty
 Package: trig 1999/03/16 v1.09 sin cos tan (DPC)
 )
-(/usr/local/texlive/2009/texmf-dist/tex/latex/latexconfig/graphics.cfg
-File: graphics.cfg 2009/08/28 v1.8 graphics configuration of TeX Live
+(/usr/local/texlive/2011/texmf-dist/tex/latex/latexconfig/graphics.cfg
+File: graphics.cfg 2010/04/23 v1.9 graphics configuration of TeX Live
 )
 Package graphics Info: Driver file: pdftex.def on input line 91.
 
-(/usr/local/texlive/2009/texmf-dist/tex/latex/pdftex-def/pdftex.def
-File: pdftex.def 2009/08/25 v0.04m Graphics/color for pdfTeX
+(/usr/local/texlive/2011/texmf-dist/tex/latex/pdftex-def/pdftex.def
+File: pdftex.def 2011/05/27 v0.06d Graphics/color for pdfTeX
+
+(/usr/local/texlive/2011/texmf-dist/tex/generic/oberdiek/infwarerr.sty
+Package: infwarerr 2010/04/08 v1.3 Providing info/warning/message (HO)
+)
+(/usr/local/texlive/2011/texmf-dist/tex/generic/oberdiek/ltxcmds.sty
+Package: ltxcmds 2011/04/18 v1.20 LaTeX kernel commands for general use (HO)
+)
 \Gread@gobject=\count88
 ))
 \Gin@req@height=\dimen110
@@ -102,10 +113,10 @@ LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 8.
 LaTeX Font Info:    ... okay on input line 8.
 LaTeX Font Info:    Try loading font information for OT1+ptm on input line 8.
 
-(/usr/local/texlive/2009/texmf-dist/tex/latex/psnfss/ot1ptm.fd
+(/usr/local/texlive/2011/texmf-dist/tex/latex/psnfss/ot1ptm.fd
 File: ot1ptm.fd 2001/06/04 font definitions for OT1/ptm.
 )
-(/usr/local/texlive/2009/texmf-dist/tex/context/base/supp-pdf.mkii
+(/usr/local/texlive/2011/texmf-dist/tex/context/base/supp-pdf.mkii
 [Loading MPS to PDF converter (version 2006.09.02).]
 \scratchcounter=\count89
 \scratchdimen=\dimen112
@@ -116,8 +127,55 @@ File: ot1ptm.fd 2001/06/04 font definitions for OT1/ptm.
 \MPscratchCnt=\count92
 \MPscratchDim=\dimen113
 \MPnumerator=\count93
+\makeMPintoPDFobject=\count94
 \everyMPtoPDFconversion=\toks25
+) (/usr/local/texlive/2011/texmf-dist/tex/generic/oberdiek/pdftexcmds.sty
+Package: pdftexcmds 2011/04/22 v0.16 Utilities of pdfTeX for LuaTeX (HO)
+
+(/usr/local/texlive/2011/texmf-dist/tex/generic/oberdiek/ifluatex.sty
+Package: ifluatex 2010/03/01 v1.3 Provides the ifluatex switch (HO)
+Package ifluatex Info: LuaTeX not detected.
 )
+(/usr/local/texlive/2011/texmf-dist/tex/generic/oberdiek/ifpdf.sty
+Package: ifpdf 2011/01/30 v2.3 Provides the ifpdf switch (HO)
+Package ifpdf Info: pdfTeX in PDF mode is detected.
+)
+Package pdftexcmds Info: LuaTeX not detected.
+Package pdftexcmds Info: \pdf@primitive is available.
+Package pdftexcmds Info: \pdf@ifprimitive is available.
+Package pdftexcmds Info: \pdfdraftmode found.
+)
+(/usr/local/texlive/2011/texmf-dist/tex/latex/oberdiek/epstopdf-base.sty
+Package: epstopdf-base 2010/02/09 v2.5 Base part for package epstopdf
+
+(/usr/local/texlive/2011/texmf-dist/tex/latex/oberdiek/grfext.sty
+Package: grfext 2010/08/19 v1.1 Managing graphics extensions (HO)
+
+(/usr/local/texlive/2011/texmf-dist/tex/generic/oberdiek/kvdefinekeys.sty
+Package: kvdefinekeys 2011/04/07 v1.3 Defining keys (HO)
+))
+(/usr/local/texlive/2011/texmf-dist/tex/latex/oberdiek/kvoptions.sty
+Package: kvoptions 2010/12/23 v3.10 Keyval support for LaTeX options (HO)
+
+(/usr/local/texlive/2011/texmf-dist/tex/generic/oberdiek/kvsetkeys.sty
+Package: kvsetkeys 2011/04/07 v1.13 Key value parser (HO)
+
+(/usr/local/texlive/2011/texmf-dist/tex/generic/oberdiek/etexcmds.sty
+Package: etexcmds 2011/02/16 v1.5 Prefix for e-TeX command names (HO)
+Package etexcmds Info: Could not find \expanded.
+(etexcmds)             That can mean that you are not using pdfTeX 1.50 or
+(etexcmds)             that some package has redefined \expanded.
+(etexcmds)             In the latter case, load this package earlier.
+)))
+Package grfext Info: Graphics extension search list:
+(grfext)             [.png,.pdf,.jpg,.mps,.jpeg,.jbig2,.jb2,.PNG,.PDF,.JPG,.JPE
+G,.JBIG2,.JB2,.eps]
+(grfext)             \AppendGraphicsExtensions on input line 452.
+
+(/usr/local/texlive/2011/texmf-dist/tex/latex/latexconfig/epstopdf-sys.cfg
+File: epstopdf-sys.cfg 2010/07/13 v1.3 Configuration of (r)epstopdf for TeX Liv
+e
+))
 LaTeX Font Info:    External font `cmex10' loaded for size
 (Font)              <12> on input line 46.
 LaTeX Font Info:    External font `cmex10' loaded for size
@@ -129,89 +187,119 @@ Overfull \hbox (20.69046pt too wide) in paragraph at lines 46--46
  [][] 
  []
 
-[1{/usr/local/texlive/2009/texmf-var/fonts/map/pdftex/updmap/pdftex.map}
+[1{/usr/local/texlive/2011/texmf-var/fonts/map/pdftex/updmap/pdftex.map}
 
 
 
 ]
+<iphone.jpg, id=9, 2457.18pt x 3276.24pt>
+File: iphone.jpg Graphic file (type jpg)
+ <use iphone.jpg>
+Package pdftex.def Info: iphone.jpg used on input line 107.
+(pdftex.def)             Requested size: 241.84842pt x 322.44409pt.
+LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <10> not available
+(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 115.
+
+
+LaTeX Warning: Reference `screenshot-processing' on page 2 undefined on input l
+ine 115.
+
+<screenshot-processing.png, id=10, 1465.475pt x 842.14626pt>
+File: screenshot-processing.png Graphic file (type png)
+
+<use screenshot-processing.png>
+Package pdftex.def Info: screenshot-processing.png used on input line 118.
+(pdftex.def)             Requested size: 241.84842pt x 138.97383pt.
+
+
+LaTeX Warning: Reference `screenshot-processing' on page 2 undefined on input l
+ine 131.
+
 Missing character: There is no ‚ in font ptmr7t!
 Missing character: There is no Ä in font ptmr7t!
 Missing character: There is no ú in font ptmr7t!
 Missing character: There is no ‚ in font ptmr7t!
 Missing character: There is no Ä in font ptmr7t!
 Missing character: There is no ù in font ptmr7t!
-LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <10> not available
-(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 135.
 
+Underfull \vbox (badness 10000) has occurred while \output is active []
 
-LaTeX Warning: Citation `experiment' on page 2 undefined on input line 135.
+ [2 <./iphone.jpg>]
 
-[2] <exp.png, id=13, 1329.96875pt x 808.01875pt>
+LaTeX Warning: Citation `experiment' on page 3 undefined on input line 149.
+
+<exp.png, id=17, 1329.96875pt x 808.01875pt>
 File: exp.png Graphic file (type png)
  <use exp.png>
-LaTeX Font Info:    Try loading font information for OMS+ptm on input line 154.
+Package pdftex.def Info: exp.png used on input line 156.
+(pdftex.def)             Requested size: 241.84842pt x 146.92896pt.
+LaTeX Font Info:    Try loading font information for OMS+ptm on input line 168.
 
 
-(/usr/local/texlive/2009/texmf-dist/tex/latex/psnfss/omsptm.fd
+(/usr/local/texlive/2011/texmf-dist/tex/latex/psnfss/omsptm.fd
 File: omsptm.fd 
 )
 LaTeX Font Info:    Font shape `OMS/ptm/m/n' in size <10> not available
-(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 154.
+(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 168.
 LaTeX Font Info:    External font `cmex10' loaded for size
-(Font)              <7> on input line 160.
+(Font)              <7> on input line 174.
 LaTeX Font Info:    External font `cmex10' loaded for size
-(Font)              <5> on input line 160.
+(Font)              <5> on input line 174.
 
-<music-scores-bar-graph.png, id=14, 558.085pt x 418.56375pt>
+Underfull \vbox (badness 3579) has occurred while \output is active []
+
+ [3 <./screenshot-processing.png> <./exp.png>]
+<music-scores-bar-graph.png, id=24, 558.085pt x 418.56375pt>
 File: music-scores-bar-graph.png Graphic file (type png)
 
-<use music-scores-bar-graph.png> [3 <./exp.png (PNG copy)>]
-<note-stats.png, id=22, 590.205pt x 409.53pt>
-File: note-stats.png Graphic file (type png)
- <use note-stats.png>
-Missing character: There is no ‚ in font ptmr7t!
-Missing character: There is no Ä in font ptmr7t!
-Missing character: There is no ô in font ptmr7t!
- [4 <./music-scores-bar-graph.png (PNG copy)> <./note-stats.png (PNG copy)>]
-Missing character: There is no ‚ in font ptmr7t!
-Missing character: There is no Ä in font ptmr7t!
-Missing character: There is no ô in font ptmr7t!
+<use music-scores-bar-graph.png>
+Package pdftex.def Info: music-scores-bar-graph.png used on input line 214.
+(pdftex.def)             Requested size: 241.84842pt x 181.38399pt.
 
-Underfull \hbox (badness 1728) in paragraph at lines 288--291
+<note_analysis_new.jpg, id=25, 824.07875pt x 562.1pt>
+File: note_analysis_new.jpg Graphic file (type jpg)
+
+<use note_analysis_new.jpg>
+Package pdftex.def Info: note_analysis_new.jpg used on input line 225.
+(pdftex.def)             Requested size: 241.84842pt x 164.96037pt.
+ [4 <./music-scores-bar-graph.png> <./note_analysis_new.jpg>]
+Overfull \hbox (2.30936pt too wide) in paragraph at lines 262--263
+\OT1/ptm/m/n/10 The au-thors would like to ac-knowl-edge Pro-fes-sor Scott Klem
+-
+ []
+
+
+Underfull \hbox (badness 1728) in paragraph at lines 268--271
 \OT1/ptm/m/n/10 R. Hamil-ton, R. Fiebrink, J. Berger, D. Zhu, M.
  []
 
-Missing character: There is no ‚ in font ptmr7t!
-Missing character: There is no Ä in font ptmr7t!
-Missing character: There is no ô in font ptmr7t!
-[5
-
-] (./uistSample.aux)
+[5] (./uistSample.aux)
 
 LaTeX Warning: There were undefined references.
 
  ) 
 Here is how much of TeX's memory you used:
- 1132 strings out of 493848
- 14442 string characters out of 3149207
- 73016 words of memory out of 3000000
- 4420 multiletter control sequences out of 15000+200000
+ 1697 strings out of 493633
+ 24208 string characters out of 3143376
+ 83598 words of memory out of 3000000
+ 4967 multiletter control sequences out of 15000+200000
  25364 words of font info for 46 fonts, out of 3000000 for 9000
- 714 hyphenation exceptions out of 8191
- 25i,10n,21p,1218b,259s stack positions out of 5000i,500n,10000p,200000b,50000s
-{/usr/local/texlive/2009/texmf-dist/fonts/enc/dvips/base/8r.enc}</usr/local/t
-exlive/2009/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/local/te
-xlive/2009/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/local/texl
-ive/2009/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/local/texli
-ve/2009/texmf-dist/fonts/type1/urw/helvetic/uhvb8a.pfb></usr/local/texlive/2009
-/texmf-dist/fonts/type1/urw/helvetic/uhvr8a.pfb></usr/local/texlive/2009/texmf-
-dist/fonts/type1/urw/helvetic/uhvro8a.pfb></usr/local/texlive/2009/texmf-dist/f
-onts/type1/urw/times/utmb8a.pfb></usr/local/texlive/2009/texmf-dist/fonts/type1
-/urw/times/utmr8a.pfb></usr/local/texlive/2009/texmf-dist/fonts/type1/urw/times
+ 831 hyphenation exceptions out of 8191
+ 37i,10n,23p,1218b,257s stack positions out of 5000i,500n,10000p,200000b,50000s
+{/usr/local/texlive/2011/texmf-dist/fonts/enc/dvips/base/8r.enc}</usr/local/t
+exlive/2011/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/local/te
+xlive/2011/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/local/texl
+ive/2011/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/local/texli
+ve/2011/texmf-dist/fonts/type1/urw/helvetic/uhvb8a.pfb></usr/local/texlive/2011
+/texmf-dist/fonts/type1/urw/helvetic/uhvr8a.pfb></usr/local/texlive/2011/texmf-
+dist/fonts/type1/urw/helvetic/uhvro8a.pfb></usr/local/texlive/2011/texmf-dist/f
+onts/type1/urw/times/utmb8a.pfb></usr/local/texlive/2011/texmf-dist/fonts/type1
+/urw/times/utmr8a.pfb></usr/local/texlive/2011/texmf-dist/fonts/type1/urw/times
 /utmri8a.pfb>
-Output written on uistSample.pdf (5 pages, 395732 bytes).
+Output written on uistSample.pdf (5 pages, 3058812 bytes).
 PDF statistics:
- 58 PDF objects out of 1000 (max. 8388607)
+ 62 PDF objects out of 1000 (max. 8388607)
+ 40 compressed objects within 1 object stream
  0 named destinations out of 1000 (max. 500000)
- 16 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 26 words of extra memory for PDF output out of 10000 (max. 10000000)
 
