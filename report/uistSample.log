@@ -1,0 +1,108 @@
+This is pdfTeX, Version 3.1415926-2.3-1.40.12 (TeX Live 2011) (format=pdflatex 2011.10.10)  10 JUN 2012 19:48
+entering extended mode
+ \write18 enabled.
+ file:line:error style messages enabled.
+ %&-line parsing enabled.
+**uistSample.tex
+(./uistSample.tex
+LaTeX2e <2009/09/24>
+Babel <v3.8l> and hyphenation patterns for english, dumylang, nohyphenation, ge
+rman-x-2009-06-19, ngerman-x-2009-06-19, afrikaans, ancientgreek, ibycus, arabi
+c, armenian, basque, bulgarian, catalan, pinyin, coptic, croatian, czech, danis
+h, dutch, ukenglish, usenglishmax, esperanto, estonian, ethiopic, farsi, finnis
+h, french, galician, german, ngerman, swissgerman, monogreek, greek, hungarian,
+ icelandic, assamese, bengali, gujarati, hindi, kannada, malayalam, marathi, or
+iya, panjabi, tamil, telugu, indonesian, interlingua, irish, italian, kurmanji,
+ lao, latin, latvian, lithuanian, mongolian, mongolianlmc, bokmal, nynorsk, pol
+ish, portuguese, romanian, russian, sanskrit, serbian, serbianc, slovak, sloven
+ian, spanish, swedish, turkish, turkmen, ukrainian, uppersorbian, welsh, loaded
+.
+(/usr/local/texlive/2011/texmf-dist/tex/latex/base/article.cls
+Document Class: article 2007/10/19 v1.4h Standard LaTeX document class
+(/usr/local/texlive/2011/texmf-dist/tex/latex/base/size10.clo
+File: size10.clo 2007/10/19 v1.4h Standard LaTeX file (size option)
+)
+\c@part=\count79
+\c@section=\count80
+\c@subsection=\count81
+\c@subsubsection=\count82
+\c@paragraph=\count83
+\c@subparagraph=\count84
+\c@figure=\count85
+\c@table=\count86
+\abovecaptionskip=\skip41
+\belowcaptionskip=\skip42
+\bibindent=\dimen102
+)
+(/usr/local/texlive/2011/texmf-dist/tex/latex/psnfss/times.sty
+Package: times 2005/04/12 PSNFSS-v9.2a (SPQR) 
+) (./uist.sty
+Style "UIST" <01 August 2005>.
+\copyrightnotice=\toks14
+\conf=\toks15
+\confinfo=\toks16
+\copyrtyr=\toks17
+\acmcopyr=\toks18
+\boilerplate=\toks19
+\copyrightetc=\toks20
+) (/usr/local/texlive/2011/texmf-dist/tex/latex/tools/tabularx.sty
+Package: tabularx 1999/01/07 v2.07 `tabularx' package (DPC)
+
+(/usr/local/texlive/2011/texmf-dist/tex/latex/tools/array.sty
+Package: array 2008/09/09 v2.4c Tabular extension package (FMi)
+\col@sep=\dimen103
+\extrarowheight=\dimen104
+\NC@list=\toks21
+\extratabsurround=\skip43
+\backup@length=\skip44
+)
+\TX@col@width=\dimen105
+\TX@old@table=\dimen106
+\TX@old@col=\dimen107
+\TX@target=\dimen108
+\TX@delta=\dimen109
+\TX@cols=\count87
+\TX@ftn=\toks22
+)
+(./uistSample.aux)
+\openout1 = `uistSample.aux'.
+
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 7.
+LaTeX Font Info:    ... okay on input line 7.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 7.
+LaTeX Font Info:    ... okay on input line 7.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 7.
+LaTeX Font Info:    ... okay on input line 7.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 7.
+LaTeX Font Info:    ... okay on input line 7.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 7.
+LaTeX Font Info:    ... okay on input line 7.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 7.
+LaTeX Font Info:    ... okay on input line 7.
+LaTeX Font Info:    Try loading font information for OT1+ptm on input line 7.
+
+(/usr/local/texlive/2011/texmf-dist/tex/latex/psnfss/ot1ptm.fd
+File: ot1ptm.fd 2001/06/04 font definitions for OT1/ptm.
+)
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <12> on input line 45.
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <8> on input line 45.
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <6> on input line 45.
+
+Overfull \hbox (20.69046pt too wide) in paragraph at lines 45--45
+ [][] 
+ []
+
+[1{/usr/local/texlive/2011/texmf-var/fonts/map/pdftex/updmap/pdftex.map}
+
+
+
+]
+Missing character: There is no â in font ptmr7t!
+Missing character: There is no € in font ptmr7t!
+Missing character: There is no ™ in font ptmr7t!
+Missing character: There is no â in font ptmr7t!
+Missing character: There is no € in font ptmr7t!
+Missing character: There is no ™ in font ptm
