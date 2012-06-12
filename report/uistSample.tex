@@ -79,7 +79,7 @@ We created a simple instrument, and conducted an experiment in which users play 
 
 For the last few decades a number of technology-based musical interactions for novices have been created as installations to be played by the public in such places as museums and exploratoria.  More recently, many new musical interactions for novices are being created as mobile apps, which are often played in private~\cite{smule,smule-2}. Music-like games such as Guitar Hero use game structure to force users to play music as effect of game actions.  Similarly Havryliv's Metris game~\cite{metris} creates music through the act of playing Tetris.  However the experience from these games does not generalize to true musical performance.
 
-Blaine and Fels~\cite{survey} proposes a number of dimensions of collaborative musical interfaces for novices, and describes twenty-one contemporary collaborative interfaces with respect to these dimensions.  Many of these interfaces combine auditory and visual elements.  Often the interface for each player is identical or similar, allowing the player to easily understand the actions of other players. And most of these interfaces restrict the range of notes or sounds that an action creates such that the results are euphonic within the greater musical context.  (This is an instance of the commonly experience tradeoff between the range of expressivity that an instrument allows and the ease with which it can be quickly learned.)  The instrument and interactions we designed for this study share these characteristics.
+Blaine and Fels~\cite{survey} proposes a number of dimensions of collaborative musical interfaces for novices, and describes twenty-one contemporary collaborative interfaces with respect to these dimensions.  Many of these interfaces combine auditory and visual elements.  Often the interface for each player is identical or similar, allowing the player to easily understand the actions of other players. And most of these interfaces restrict the range of notes or sounds that an action creates such that the results are euphonic within the greater musical context.  (This is an instance of the commonly experience tradeoff between the range of expressivity that an instrument allows and the ease with which it can be quickly learned).  The instrument and interactions we designed for this study share these characteristics.
 
 
 
@@ -112,12 +112,12 @@ A note consists of a short synthetic tone with a sharp attack followed by a quic
 
 \subsubsection{The Interaction}
 
-The musical interaction is designed for two players.  Each plays their own instrument with their own iPhone controller, and each instrument has a slightly different tone (a sawtooth wave for one and a square wave for the other.)  There is a shared public display where the players, as well as any bystanders, can see both players' actions.  The display appears as a single large rectangle mirroring the touch area on the iPhone controller.  Notes played on either instrument appear as colored circles in the rectangle with a different color for each player, as you can see on figure~\ref{screenshot-processing}.
+The musical interaction is designed for two players.  Each plays their own instrument with their own iPhone controller, and each instrument has a slightly different tone (a sawtooth wave for one and a square wave for the other).  There is a shared public display where the players, as well as any bystanders, can see both players' actions.  The display appears as a single large rectangle mirroring the touch area on the iPhone controller.  Notes played on either instrument appear as colored circles in the rectangle with a different color for each player, as you can see on Figure~\ref{screenshot-processing}.
 
 \begin{figure}[tb]
 \includegraphics[width=\columnwidth]{screenshot-processing.png}
 \caption{On the left, the general public shared screen. Player 1's position on the iOS device is reproduced here with a red circle, whereas the green circle correspond to player 2. On the right, adding structure to the interaction: players are encouraged to play in the black zones with a blue border. The bars on either side of the screen represent the number of notes left for each player in the current pattern.}
-\label{struct}
+\label{screenshot-processing}
 \end{figure}
 
 \subsubsection{Playing a Duet}
@@ -128,7 +128,7 @@ The notes that the instruments play are constrained to a scale which sounds good
 
 \subsubsection{Adding Constraints to Create Structure}
 
-The instrument can be thought of as enabling three basic musical dimensions: note \emph{pitch} (controlled by vertical location), note \emph{timbre} (horizontal location), and the \emph{density} of notes (a function of how frequently notes are played.)  We create structure by directing the players into different areas of this musical space at different times. During structured duets blue squares appear on the display as seen in Figure~\ref{screenshot-processing}.  The players are instructed to play within these squares, and if they play outside of them their sounds becomes distorted. The boundaries of the structure squares change for each 4-bar “pattern” in the music. This serves to constrain the first two musical dimensions.
+The instrument can be thought of as enabling three basic musical dimensions: note \emph{pitch} (controlled by vertical location), note \emph{timbre} (horizontal location), and the \emph{density} of notes (a function of how frequently notes are played).  We create structure by directing the players into different areas of this musical space at different times. During structured duets blue squares appear on the display as seen in Figure~\ref{screenshot-processing}.  The players are instructed to play within these squares, and if they play outside of them their sounds becomes distorted. The boundaries of the structure squares change for each 4-bar ``pattern'' in the music. This serves to constrain the first two musical dimensions.
 
 We control the third dimension, note density, by constraining the number of notes that a player can play during each pattern. Colored bars on either side of the screen indicate the number of notes left to each player for the current pattern.
 
@@ -146,7 +146,7 @@ For each pair of participants the experiment proceeded as follows: The instrumen
  
 Following the first duet there was a brief pause.  During this pause the control group was given verbal suggestions for ways to structure their interactions.  The suggestions were equivalent to what the experimental group might infer from the constraints of the structured interaction.
 
-Participants then performed a second duet together.  The musical accompaniment for the second duet was the same as for the first.  In the second duet both the control and experimental groups were given the unstructured interaction. The experiment is represented on figure~\cite{experiment}.
+Participants then performed a second duet together.  The musical accompaniment for the second duet was the same as for the first.  In the second duet both the control and experimental groups were given the unstructured interaction. The experiment is represented on Figure~\ref{experiment}.
 
 This design allows as to compare the duets between and within groups.  Given our hypotheses, we expected to find that in the first duet the experimental group was more enjoyable, due to the context provided by the structure. We also expected the the experimental group would create better music than the control group. We expected that within the experimental group the second duet would be less enjoyable, due to the loss of context when the structure was removed.  
 
@@ -183,7 +183,7 @@ These results correlate with and confirm the previous results by removing any bi
 
 \subsection{Crowdsourcing the Evaluation of the Musical Quality}
 
-Musical quality is an inherently subjective judgement, and thus difficult to objectively assess.  However by soliciting judgements from a large number of people we can hope to average out personal preferences and converge on some measure of quality.  We created a web site which asked visitors to compare recordings of two duets and indicate which was better.  We advertised for evaluators by posting on Facebook and various email lists, and within 48 hours we gathered 474 evaluations, coming from 114 different IP addresses. By using the Elo rating system, which computes the relative scores of a group of ordered pairs, we were able to rank duets in terms of musical quality.
+One of the main challenges we had to face was to evaluate the quality of the music. Indeed, aesthetics is intrinsically subjective. Removing the biases introduced by personal preferences can be done by having the evaluation done by a large number of people.
 
 Consequently, we launched the MusicMash website that asks the users to compare two songs and tell which one is better. This allowed us to rank the music that were produced in the first duet (by the control and the experimental group), and on the other hand, the musics that were produced in the second duet (idem). In order to rank the musics, we used the Elo rating system which allows to compute the relative quality of the musics.
 
@@ -219,7 +219,7 @@ Experimental & 1414 \\
 
 \subsection{Analyzing Notes}
 
-We recorded all note data during the duet performances, and calculated three metrics to quantify the musical parameter of note density. The \emph{percent of notes played} tells us how many total notes were played. The \emph{percent of time with no notes} is how often neither player was playing, \emph{i.e.} how much space the players left. And the \emph{percent of notes with only one player} is the proportion of time when a note was played that only one player was playing, which indicates how much the players took turns. Each of these metric has an obvious trend when we plot from the duets from the Control group to those of the Experiment group (see figure~\ref{note-stats}.) The first increased, while the second two decrease. A significant difference between these results appears when we compare the second duet of the control group with that of the experimental group. The control group played fewer notes ($p = 0.048$) and had higher proportion of single notes, \emph{i.e.} they exhibited more turn taking ($p = 0.035$). In some sense this suggests that the control group played better music during the second duet. 
+We recorded all note data during the duet performances, and calculated three metrics to quantify the musical parameter of note density. The percent of notes played tells us how many total notes were played. The percent of time with no notes tells us how often neither player was playing, \emph{i.e.} how much space the players left. And the percent of notes with only one player tells is the proportion of time when a note was played that only one player was playing at that time, which tells us how much the players took turns. Each of these metric has an obvious trend when we plot from the duets from the Control group to those of the Experiment group, as we can see on Figure~\ref{note-stats}. The first increased, while the second two decrease. A significant difference between these results appears when we compare the second duet of the control with that of the experiment. The control group played fewer notes ($p = 0.048$) and had higher proportion of single notes, \emph{i.e.} they exhibited more turn taking ($p = 0.035$). In some sense this suggests that the control group played better music during the second duet. 
 
 \begin{figure}[tb]
 \includegraphics[width=\columnwidth]{note_analysis_new.jpg}
@@ -232,34 +232,34 @@ We recorded all note data during the duet performances, and calculated three met
 
 \section{DISCUSSION}
 
-Our goal was to better understand musical interactions for novices by dividing the interface into instrument and interactions, and then investigating the effect of adding structure to the interaction.  Our crowd-sourced evaluation of the musical results showed that adding structure clearly leads to better music.  However it is less clear whether adding structure led to a better experience for the user.  
+Our goal was to better understand musical interactions for novices by dividing the interface into instrument and interactions, and then to investigate the effect of adding structure to the interaction.  Our crowd-sourced evaluation of the musical results showed that adding structure clearly leads to better music.  However it is less clear whether adding structure led to a better experience for the user.  
 
 From the survey we found that users who played two unstructured duets had no significant change in their experience between duets, while those who had a structured interaction in the first duet had a better experience in the second unstructured duet. We can interpret this in either of two conflicting ways.
 
-The first is that the second duet was better because the previous structured interaction increased the users' confidence in performing duets with the instrument. From the interviews a few people (3 out of 8) reported that they liked the structural constraints because, like a game, they provided goals. However, none reported that they thought of the constraints during the second duet. Thus, further studies might: 
-
+The first is that the second duet was better because the previous structured interaction increased the users' confidence in performing duets with the instrument. From the interviews a few people (3 out of 16) explicitly reported that they liked the structural constraints because like a game, they provided goals, but none reported that they thought of the constraints during the second duet. Following those ideas, 
+further studies could consist in:
 \begin{itemize}
-\item determine whether having structure actually teaches (consciously or subconsciously) musical principles to novices users.
-\item treat the first duets explicitly as \textit{training} (instead of a performance), and investigate how this training affects musical quality and user experience in subsequent unstructured performances.  This might lead to a subtly different experiment with a significantly different focus.
+\item exploring if the structure in the first duet actually taught musical principles (consciously or subconsciously) to the novices,
+\item analyzing if structured interaction could be used as an efficient \textit{training} for better enjoyment during an actual performance. Indeed, the level of enjoyment for the first duet is similar in both groups, but the second duet was significantly better enjoyed in the experimental group. Instead of seeing the first duets as \textit{performances}, we could see them as \textit{trainings}. In that case, it would be interesting to study if a \textit{training} period with structure leads to better experience for a subsequent \textit{performance}.
 \end{itemize}
 
-The second interpretation of the increase in enjoyment from structured to unstructured interaction, is that the structured interactions were not as enjoyable as unstructured.  A number of participants (4 out of 8) reported that it was difficult to quickly understand all the visual feedback being provided during structured interactions.  Though we attempted to design a simple instrument with simple interaction constraints, it seems the net effect was to create a complicated interaction.
+The second interpretation of the increase in enjoyment from structured to unstructured interaction, is that the structured interactions were not as enjoyable as unstructured.  A number of participants (4 out of 16) explicitly reported that it was difficult to quickly understand all the visual feedback being provided during structured interactions.  Though we attempted to design a simple instrument with simple interaction constraints, the net effect was to create a complicated interaction.
 
-Despite the differences between the interaction types, almost all participants reported enjoying the experience, and being pleased with being able to easily make good-sounding music.
+Despite any differences between the interaction types, almost all participants reported enjoying the experience, and being pleased with being able to easily make relatively good-sounding music.
 
 
-
+\newpage
 
 \section{CONCLUSION}
 
-In this study, we investigated the effects of adding structural guidelines to musical interactions for novices. The instrument we designed allowed novices to play the music with simple interactions, which could be structured by adding constraints to the musical parameters (pitch, timber, and note density). People were divided into two groups: a control group were pairs of people had to play a series of two duets without structure, and an experimental group where the first duet had structured interaction and the second was unstructured. The analysis of the music quality in the pieces produced in the different groups led us to find that structure significantly improved the quality of the music. The results of the post experiment survey showed that the experimental group had a better experience during the second unstructured duet.
+In this study, we investigated the effects of adding structural guidelines to musical interactions for novices. The instrument we designed allowed novices to play the music with simple interactions, which could be constrained by adding structure to the three parameters (pitch, timber, and note density). People were divided into two groups: a control group were pairs of people had to play a series of two duets without structure, and an experimental group where the first duet had structured interaction and the second was unstructured. The analysis of the music quality in the pieces produced in the different groups let us find that structure significantly improved the quality of the music. The results of the post experiment survey showed that the experimental group had a better experience during the second unstructured duet.
 
 
 
 
 \section{ACKNOWLEDGMENTS}
 
-The authors would like to acknowledge Professor Scott Klemmer, Chinmay Kulkarni, our experiment participants for their time and input, and the crowd of online evaluators for their opinions.
+The authors would like to acknowledge Professor Scott Klemmer, Chinmay Kulkarni, and the participants of our experiments for their time and input.
 
 %%%	You can use bibtex if you like, but I've hardwired in these 
 %%%	references to avoid sending you a separate .bib file.
