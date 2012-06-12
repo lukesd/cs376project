@@ -183,7 +183,11 @@ These results correlate with and confirm the previous results by removing any bi
 
 \subsection{Crowdsourcing the Evaluation of the Musical Quality}
 
+<<<<<<< HEAD
 One of the main challenges we had to face was to evaluate the quality of the music. Indeed, aesthetics is intrinsically subjective. Removing the biases introduced by personal preferences can be done by having the evaluation done by a large number of people.
+=======
+Musical quality is an inherently subjective judgement, and thus difficult to objectively assess.  However by soliciting judgements from a large number of people we can hope to average out personal preferences and converge on some measure of quality.  We created a web site which asked visitors to compare recordings of two duets and indicate which was better.  We advertised for evaluators by posting on Facebook and various email lists, and within 48 hours we gathered 474 evaluations, coming from 114 different IP addresses. By using the Elo rating system, which computes the relative scores of a group of ordered pairs, we were able to rank duets in terms of musical quality.
+>>>>>>> luke's final edits
 
 Consequently, we launched the MusicMash website that asks the users to compare two songs and tell which one is better. This allowed us to rank the music that were produced in the first duet (by the control and the experimental group), and on the other hand, the musics that were produced in the second duet (idem). In order to rank the musics, we used the Elo rating system which allows to compute the relative quality of the musics.
 
@@ -219,7 +223,7 @@ Experimental & 1414 \\
 
 \subsection{Analyzing Notes}
 
-We recorded all note data during the duet performances, and calculated three metrics to quantify the musical parameter of note density. The percent of notes played tells us how many total notes were played. The percent of time with no notes tells us how often neither player was playing, \emph{i.e.} how much space the players left. And the percent of notes with only one player tells is the proportion of time when a note was played that only one player was playing at that time, which tells us how much the players took turns. Each of these metric has an obvious trend when we plot from the duets from the Control group to those of the Experiment group, as we can see on figure~\ref{note-stats}. The first increased, while the second two decrease. A significant difference between these results appears when we compare the second duet of the control with that of the experiment. The control group played fewer notes ($p = 0.048$) and had higher proportion of single notes, \emph{i.e.} they exhibited more turn taking ($p = 0.035$). In some sense this suggests that the control group played better music during the second duet. 
+We recorded all note data during the duet performances, and calculated three metrics to quantify the musical parameter of note density. The \emph{percent of notes played} tells us how many total notes were played. The \emph{percent of time with no notes} is how often neither player was playing, \emph{i.e.} how much space the players left. And the \emph{percent of notes with only one player} is the proportion of time when a note was played that only one player was playing, which indicates how much the players took turns. Each of these metric has an obvious trend when we plot from the duets from the Control group to those of the Experiment group (see figure~\ref{note-stats}.) The first increased, while the second two decrease. A significant difference between these results appears when we compare the second duet of the control group with that of the experimental group. The control group played fewer notes ($p = 0.048$) and had higher proportion of single notes, \emph{i.e.} they exhibited more turn taking ($p = 0.035$). In some sense this suggests that the control group played better music during the second duet. 
 
 \begin{figure}[tb]
 \includegraphics[width=\columnwidth]{note_analysis_new.jpg}
@@ -232,34 +236,34 @@ We recorded all note data during the duet performances, and calculated three met
 
 \section{DISCUSSION}
 
-Our goal was to better understand musical interactions for novices by dividing the interface into instrument and interactions, and then to investigate the effect of adding structure to the interaction.  Our crowd-sourced evaluation of the musical results showed that adding structure clearly leads to better music.  However it is less clear whether adding structure led to a better experience for the user.  
+Our goal was to better understand musical interactions for novices by dividing the interface into instrument and interactions, and then investigating the effect of adding structure to the interaction.  Our crowd-sourced evaluation of the musical results showed that adding structure clearly leads to better music.  However it is less clear whether adding structure led to a better experience for the user.  
 
 From the survey we found that users who played two unstructured duets had no significant change in their experience between duets, while those who had a structured interaction in the first duet had a better experience in the second unstructured duet. We can interpret this in either of two conflicting ways.
 
-The first is that the second duet was better because the previous structured interaction increased the users' confidence in performing duets with the instrument. From the interviews a few people (3 out of 16) explicitly reported that they liked the structural constraints because like a game, they provided goals, but none reported that they thought of the constraints during the second duet. Following those ideas, 
-further studies could consist in:
+The first is that the second duet was better because the previous structured interaction increased the users' confidence in performing duets with the instrument. From the interviews a few people (3 out of 8) reported that they liked the structural constraints because, like a game, they provided goals. However, none reported that they thought of the constraints during the second duet. Thus, further studies might: 
+
 \begin{itemize}
-\item exploring if the structure in the first duet actually taught musical principles (consciously or subconsciously) to the novices,
-\item analyzing if structured interaction could be used as an efficient \textit{training} for better enjoyment during an actual performance. Indeed, the level of enjoyment for the first duet is similar in both groups, but the second duet was significantly better enjoyed in the experimental group. Instead of seeing the first duets as \textit{performances}, we could see them as \textit{trainings}. In that case, it would be interesting to study if a \textit{training} period with structure leads to better experience for a subsequent \textit{performance}.
+\item determine whether having structure actually teaches (consciously or subconsciously) musical principles to novices users.
+\item treat the first duets explicitly as \textit{training} (instead of a performance), and investigate how this training affects musical quality and user experience in subsequent unstructured performances.  This might lead to a subtly different experiment with a significantly different focus.
 \end{itemize}
 
-The second interpretation of the increase in enjoyment from structured to unstructured interaction, is that the structured interactions were not as enjoyable as unstructured.  A number of participants (4 out of 16) explicitly reported that it was difficult to quickly understand all the visual feedback being provided during structured interactions.  Though we attempted to design a simple instrument with simple interaction constraints, the net effect was to create a complicated interaction.
+The second interpretation of the increase in enjoyment from structured to unstructured interaction, is that the structured interactions were not as enjoyable as unstructured.  A number of participants (4 out of 8) reported that it was difficult to quickly understand all the visual feedback being provided during structured interactions.  Though we attempted to design a simple instrument with simple interaction constraints, it seems the net effect was to create a complicated interaction.
 
-Despite any differences between the interaction types, almost all participants reported enjoying the experience, and being pleased with being able to easily make relatively good-sounding music.
+Despite the differences between the interaction types, almost all participants reported enjoying the experience, and being pleased with being able to easily make good-sounding music.
 
 
 
 
 \section{CONCLUSION}
 
-In this study, we investigated the effects of adding structural guidelines to musical interactions for novices. The instrument we designed allowed novices to play the music with simple interactions, which could be constrained by adding structure to the three parameters (pitch, timber, and note density). People were divided into two groups: a control group were pairs of people had to play a series of two duets without structure, and an experimental group where the first duet had structured interaction and the second was unstructured. The analysis of the music quality in the pieces produced in the different groups let us find that structure significantly improved the quality of the music. The results of the post experiment survey showed that the experimental group had a better experience during the second unstructured duet.
+In this study, we investigated the effects of adding structural guidelines to musical interactions for novices. The instrument we designed allowed novices to play the music with simple interactions, which could be structured by adding constraints to the musical parameters (pitch, timber, and note density). People were divided into two groups: a control group were pairs of people had to play a series of two duets without structure, and an experimental group where the first duet had structured interaction and the second was unstructured. The analysis of the music quality in the pieces produced in the different groups led us to find that structure significantly improved the quality of the music. The results of the post experiment survey showed that the experimental group had a better experience during the second unstructured duet.
 
 
 
 
 \section{ACKNOWLEDGMENTS}
 
-The authors would like to acknowledge Professor Scott Klemmer, Chinmay Kulkarni, and the participants of our experiments for their time and input.
+The authors would like to acknowledge Professor Scott Klemmer, Chinmay Kulkarni, our experiment participants for their time and input, and the crowd of online evaluators for their opinions.
 
 %%%	You can use bibtex if you like, but I've hardwired in these 
 %%%	references to avoid sending you a separate .bib file.

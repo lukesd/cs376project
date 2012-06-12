@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 This is pdfTeX, Version 3.1415926-2.3-1.40.12 (TeX Live 2011) (format=pdflatex 2011.10.10)  11 JUN 2012 17:32
+=======
+This is pdfTeX, Version 3.1415926-1.40.10 (TeX Live 2009) (format=pdflatex 2009.11.7)  11 JUN 2012 18:02
+>>>>>>> luke's final edits
 entering extended mode
  \write18 enabled.
  file:line:error style messages enabled.
@@ -293,7 +297,11 @@ dist/fonts/type1/urw/helvetic/uhvro8a.pfb></usr/local/texlive/2011/texmf-dist/f
 onts/type1/urw/times/utmb8a.pfb></usr/local/texlive/2011/texmf-dist/fonts/type1
 /urw/times/utmr8a.pfb></usr/local/texlive/2011/texmf-dist/fonts/type1/urw/times
 /utmri8a.pfb>
+<<<<<<< HEAD
 Output written on uistSample.pdf (5 pages, 3061842 bytes).
+=======
+Output written on uistSample.pdf (5 pages, 3037871 bytes).
+>>>>>>> luke's final edits
 PDF statistics:
  62 PDF objects out of 1000 (max. 8388607)
  40 compressed objects within 1 object stream
