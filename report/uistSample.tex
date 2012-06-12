@@ -105,14 +105,14 @@ A note consists of a short synthetic tone with a sharp attack followed by a quic
 
 \begin{figure}[tb]
 \includegraphics[width=\columnwidth]{iphone.jpg}
-\caption{The instrument on the iOS device. A new note is played each time the finger touches or drags the surface.}
+\caption{The instrument control on an iOS device. A new note is played when the finger touches or drags the surface.}
 \label{iphone}
 \end{figure}
 
 
 \subsubsection{The Interaction}
 
-The musical interaction is designed for two players.  Each plays their own instrument with their own iPhone controller, and each instrument has a slightly different tone (a sawtooth wave for one and a square wave for the other.)  There is a shared public display where the players, as well as any bystanders, can see both players' actions.  The display appears as a single large rectangle mirroring the touch area on the iPhone controller.  Notes played on either instrument appear as colored circles in the rectangle with a different color for each player (see figure~\ref{screenshot-processing}.)
+The musical interaction is designed for two players.  Each plays their own instrument with their own iPhone controller, and each instrument has a slightly different tone (a sawtooth wave for one and a square wave for the other.)  There is a shared public display where the players, as well as any bystanders, can see both players' actions.  The display appears as a single large rectangle mirroring the touch area on the iPhone controller.  Notes played on either instrument appear as colored circles in the rectangle with a different color for each player (see figure~\ref{screenshot-processing} a).
 
 \begin{figure}[tb]
 \includegraphics[width=\columnwidth]{screenshot-processing.png}
@@ -128,21 +128,21 @@ The notes that the instruments can play are constrained to a scale which sounds 
 
 \subsubsection{Adding Constraints to Create Structure}
 
-The instrument can be thought of as enabling three basic musical dimensions: note \emph{pitch} (controlled by vertical location), note \emph{timbre} (horizontal location), and the \emph{density} of notes (a function of how frequently notes are played.)  We create structure by directing the players into different areas of this musical space at different times. During structured duets blue squares appear on the display as seen in Figure~\ref{screenshot-processing}.  The players are instructed to play within these squares, and if they play outside of them their sounds becomes distorted. The boundaries of the structure squares change for each 4-bar “pattern” in the music. This serves to constrain the first two musical dimensions.
+The instrument can be thought of as enabling three basic musical dimensions: note \emph{pitch} (controlled by vertical location), note \emph{timbre} (horizontal location), and the \emph{density} of notes (a function of how frequently notes are played.)  We create structure by directing the players into different areas of this musical space at different times. During structured duets blue squares appear on the display as seen in Figure~\ref{screenshot-processing} b.  The players are instructed to play within these squares, and if they play outside of them their sounds becomes distorted. The boundaries of the structure squares change for each 4-bar “pattern” in the music. This serves to constrain the first two musical dimensions.
 
 We control the third dimension, note density, by constraining the number of notes that a player can play during each pattern. Colored bars on either side of the screen indicate the number of notes left to each player for the current pattern.
 
 
 \subsubsection{Implementation}
 
-The instrument is controlled with a custom layout for the TouchOSC iOS app which sends Open Sound Control (OSC) messages over UDP to a computer.  On the computer a program written in ChucK performs all the sound synthesis and sequencing as well as the logic for the structural constraints. The display is created by a Processing program on the same computer.
+The instrument is controlled with a custom layout for the TouchOSC iOS app which sends Open Sound Control (OSC) messages over UDP to a computer.  On the computer a program written in ChucK performs the sound synthesis and sequencing as well as the logic for the structural constraints. The display is created by a Processing program on the same computer.
 
 
 
 \subsection{The Experiment}
-We performed a between subjects experiment.  Participants were grouped into pairs, and pairs were assigned to either the control or experimental condition.  We had eight pairs of participants divided into four control pairs and four experimental pairs. All participants were university students.
+We performed a between subjects experiment.  Participants were grouped into pairs, and pairs were assigned to either the control or experimental condition.  We had eight pairs of participants divided into the two conditions. All participants were university students.
 
-For each pair of participants the experiment proceeded as follows: The instrument was briefly demonstrated, and participants then had up to two minutes to learn the instrument by playing freely with no accompanying music.  Both participants learned their instrument simultaneously and could hear each other and see each other's actions on the display.  Following learning the instrument, the first duet was performed.  For the control coup the first duet was unstructured, and for the experimental group it was structured.
+For each pair of participants the experiment proceeded as follows: The instrument was briefly demonstrated. Then participants had up to two minutes to learn the instrument by playing freely with no accompanying music.  Both participants learned their instrument simultaneously and could hear each other and see each other's actions on the display.  Following learning the instrument, the first duet was performed.  For the control coup the first duet was unstructured, and for the experimental group it was structured.
  
 Following the first duet there was a brief pause.  During this pause the control group was given verbal suggestions for ways to structure their interactions.  The suggestions were equivalent to what the experimental group might infer from the constraints of the structured interaction.
 
@@ -178,18 +178,16 @@ Furthermore, we calculated the increase of these metrics between duet 1 and duet
 \item the increase in the enjoyment from duet 1 to duet 2 is greater in the experimental group than in the control group ($t(14) = 1.85$, $p = 0.043$),
 \item the increase in the perceived music quality from duet 1 to duet 2 is greater in the experimental group ($t(14) = 2.17, p = 0.024$).
 \end{itemize}
-These results correlate with and confirm the previous results by removing any bias due to different means between the groups: for the experimental group, the experience was significantly better in the second duet than in the first one.
+These results correlate with and confirm the previous results by removing any bias due to different means between the groups: for the experimental group, the experience was significantly better in the second duet than in the first.
 
 
 \subsection{Crowdsourcing the Evaluation of the Musical Quality}
 
-One of the main challenges we had to face was to evaluate the quality of the music. Indeed, aesthetics is intrinsically subjective. Removing the biases introduced by personal preferences can be done by having the evaluation done by a large number of people.
+Musical quality is an inherently subjective judgement, and thus difficult to objectively assess.  However by soliciting judgements from a large number of people we can hope to average out personal preferences and perhaps converge on some measure of quality.  We created a web site which asked visitors to compare recordings of two duets and indicate which was better.  We advertised for evaluators by posting on Facebook and various email lists, and within 48 hours we gathered 474 evaluations, coming from 114 different IP addresses. By using the Elo rating system, which computes the relative scores of a group of ordered pairs, we were able to rank duets in terms of musical quality.
 
-Consequently, we launched the MusicMash website that asks the users to compare two songs and tell which one is better. This allowed us to rank the music that were produced in the first duet (by the control and the experimental group), and on the other hand, the musics that were produced in the second duet (idem). In order to rank the musics, we used the Elo rating system which allows to compute the relative quality of the musics.
+We performed separate ratings of the recordings of all the first duets (for both groups), and all the second duets (also both groups.)  Table~\ref{musicmash-results} shows the ranking among the songs in duet 1. These scores had a standard deviation of $44.05$ and a mean of $1500$.  The music produced by group 3 is almost two standard deviations below the mean ($\Delta = 86$), and thus we considered this data point an outlier, and removed it from our dataset.
 
-In 48 hours, we gathered 474 evaluations, coming from 114 different IP addresses. Table~\ref{musicmash-results} shows the ranking among the songs in duet 1. With a standard deviation of $44.05$ and a mean of $1500$ in the Elo scores of these songs, it means that the music produced by group 3 is almost two standard deviations below the mean ($\Delta = 86$). For that reason, we think we can reasonably assume that this data point is an outlier, and remove it from our dataset.
-
-Figure~\ref{survey-results} shows the average Elo score of the music performed with structure, and the music performed without structure. The average score of the music performed with structure is significantly greater than the score of the music performed without structure ($t(6) = 3.55$, $p = 0.006$). Put differently, people preferred music played with structure to music played without structure.
+Figure~\ref{survey-results} shows the average Elo score of the music performed with structure, and the music performed without structure. The average score of the music performed with structure is significantly greater than the score of the music performed without structure ($t(6) = 3.55$, $p = 0.006$). In other words, people preferred music played with structure to music played without structure.  We did not find any trend in the ranking of the second duets.
 
 \begin{table}[tb]
 \begin{center}
@@ -205,17 +203,18 @@ Control & 1489 \\
 Control & 1480 \\
 Experimental & 1414 \\
 \end{tabular}
-\caption{Ranking of the musics on MusicMash. These musics belong to the first duet, and come from the control and the experimental group. The experimental group performed music with structure; the control group performed music without structure.} 
+\caption{Ranking of recordings made of the first duets in terms of musical quality. The experimental group performed music with structure; the control group performed music without structure.} 
 \label{musicmash-results}
 \end{center}
 \end{table}
 
 \begin{figure}[tb]
 \includegraphics[width=\columnwidth]{music-scores-bar-graph.png}
-\caption{Note repartition in the different duets.} 
+\caption{Musical quality of the first duets for the control (unstructured) and experimental (structured) conditions.} 
 \label{survey-results}
 \end{figure}
 
+% edited thru here... LUke
 
 \subsection{Analyzing Notes}
 

@@ -1,8 +1,4 @@
-<<<<<<< HEAD
-This is pdfTeX, Version 3.1415926-2.3-1.40.12 (TeX Live 2011) (format=pdflatex 2011.10.10)  11 JUN 2012 16:50
-=======
-This is pdfTeX, Version 3.1415926-1.40.10 (TeX Live 2009) (format=pdflatex 2009.11.7)  11 JUN 2012 16:51
->>>>>>> minor edits and syncing
+This is pdfTeX, Version 3.1415926-1.40.10 (TeX Live 2009) (format=pdflatex 2009.11.7)  11 JUN 2012 17:26
 entering extended mode
  \write18 enabled.
  %&-line parsing enabled.
@@ -148,20 +144,10 @@ LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <10> not available
 LaTeX Warning: Reference `screenshot-processing' on page 2 undefined on input l
 ine 115.
 
-<<<<<<< HEAD
-<screenshot-processing.png, id=10, 1465.475pt x 1003.75pt>
+<screenshot-processing.png, id=9, 1465.475pt x 1003.75pt>
 File: screenshot-processing.png Graphic file (type png)
 
 <use screenshot-processing.png>
-Package pdftex.def Info: screenshot-processing.png used on input line 118.
-(pdftex.def)             Requested size: 241.84842pt x 165.64223pt.
-
-=======
-<screenshot-processing.png, id=9, 1465.475pt x 842.14626pt>
-File: screenshot-processing.png Graphic file (type png)
-
-<use screenshot-processing.png>
->>>>>>> minor edits and syncing
 
 LaTeX Warning: Reference `screenshot-processing' on page 2 undefined on input l
 ine 131.
@@ -194,16 +180,8 @@ LaTeX Font Info:    External font `cmex10' loaded for size
 (Font)              <7> on input line 174.
 LaTeX Font Info:    External font `cmex10' loaded for size
 (Font)              <5> on input line 174.
-<<<<<<< HEAD
- [3 <./screenshot-processing.png> <./exp.png>]
-<music-scores-bar-graph.png, id=24, 558.085pt x 418.56375pt>
-=======
-
-Underfull \vbox (badness 3579) has occurred while \output is active []
-
  [3 <./screenshot-processing.png (PNG copy)> <./exp.png (PNG copy)>]
 <music-scores-bar-graph.png, id=23, 558.085pt x 418.56375pt>
->>>>>>> minor edits and syncing
 File: music-scores-bar-graph.png Graphic file (type png)
 
 <use music-scores-bar-graph.png>
@@ -212,13 +190,13 @@ File: note_analysis_new.jpg Graphic file (type jpg)
 
 <use note_analysis_new.jpg> [4 <./music-scores-bar-graph.png (PNG copy)> <./not
 e_analysis_new.jpg>]
-Overfull \hbox (2.30936pt too wide) in paragraph at lines 262--263
+Overfull \hbox (2.30936pt too wide) in paragraph at lines 261--262
 \OT1/ptm/m/n/10 The au-thors would like to ac-knowl-edge Pro-fes-sor Scott Klem
 -
  []
 
 
-Underfull \hbox (badness 1728) in paragraph at lines 268--271
+Underfull \hbox (badness 1728) in paragraph at lines 267--270
 \OT1/ptm/m/n/10 R. Hamil-ton, R. Fiebrink, J. Berger, D. Zhu, M.
  []
 
@@ -230,7 +208,7 @@ LaTeX Warning: There were undefined references.
 Here is how much of TeX's memory you used:
  1147 strings out of 493848
  14741 string characters out of 3149207
- 71035 words of memory out of 3000000
+ 72035 words of memory out of 3000000
  4432 multiletter control sequences out of 15000+200000
  25364 words of font info for 46 fonts, out of 3000000 for 9000
  714 hyphenation exceptions out of 8191
@@ -245,11 +223,7 @@ dist/fonts/type1/urw/helvetic/uhvro8a.pfb></usr/local/texlive/2009/texmf-dist/f
 onts/type1/urw/times/utmb8a.pfb></usr/local/texlive/2009/texmf-dist/fonts/type1
 /urw/times/utmr8a.pfb></usr/local/texlive/2009/texmf-dist/fonts/type1/urw/times
 /utmri8a.pfb>
-<<<<<<< HEAD
-Output written on uistSample.pdf (5 pages, 3061560 bytes).
-=======
-Output written on uistSample.pdf (5 pages, 3033635 bytes).
->>>>>>> minor edits and syncing
+Output written on uistSample.pdf (5 pages, 3038058 bytes).
 PDF statistics:
  60 PDF objects out of 1000 (max. 8388607)
  0 named destinations out of 1000 (max. 500000)
